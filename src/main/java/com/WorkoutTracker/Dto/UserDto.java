@@ -9,10 +9,15 @@ public class UserDto {
     private String name;
     private String email;
     private String password;
+    private String gender_name;
 
     public UserDto(String name, String email) {
         this.name = name;
         this.email = email;
+    }
+
+    public UserDto() {
+
     }
 
     public Integer getUser_id() {
@@ -47,4 +52,11 @@ public class UserDto {
         this.password = password;
     }
 
+    public String getGender_name() {
+        return gender_name;
+    }
+
+    public void setGender_name(String gender_name) {
+        this.gender_name = gender_name;
+    }
 }

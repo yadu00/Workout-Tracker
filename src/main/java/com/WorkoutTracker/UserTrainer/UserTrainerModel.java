@@ -13,13 +13,11 @@ public class UserTrainerModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserModel user;
+    @Column(name = "user_id")
+    private Integer user_id;
 
-    @ManyToOne
-    @JoinColumn(name = "trainer_id", nullable = false)
-    private TrainerModel trainer;
+    @Column(name = "trainer_id")
+    private Integer trainer_id;
 
     public Integer getId() {
         return id;
@@ -29,19 +27,21 @@ public class UserTrainerModel {
         this.id = id;
     }
 
-    public UserModel getUser() {
-        return user;
+
+
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public void setUser(UserModel user) {
-        this.user = user;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
 
-    public TrainerModel getTrainer() {
-        return trainer;
+    public Integer getTrainer_id() {
+        return trainer_id;
     }
 
-    public void setTrainer(TrainerModel trainer) {
-        this.trainer = trainer;
+    public void setTrainer_id(Integer trainer_id) {
+        this.trainer_id = trainer_id;
     }
 }

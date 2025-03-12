@@ -2,12 +2,15 @@ package com.WorkoutTracker.User.UserDetails;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDate;
+@CrossOrigin(origins = "http://localhost:8081")
 
 @Entity
 @Table(name = "user_health_table")
 @Data
+
 public class UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +37,30 @@ public class UserDetails {
 
     @Column(name = "bmi_Updated_date")
     private LocalDate bmi_Updated_date;
+
+    @Column(name = "gender")
+    private String gender;
+
+
+    @Column(name = "goal")
+    private String goal;
+
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGoal() {
+        return goal;
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
+    }
 
     public Integer getUserDetails_id() {
         return userDetails_id;

@@ -11,9 +11,9 @@ public class TrainerDto {
     private String email;
     private String password;
     private String certification;
-    private int experienceYears;
+    private Integer experienceYears;
     private Integer specialization;
-
+    private String specialisationName;
     public Integer getTrainer_id() {
         return trainer_id;
     }
@@ -54,11 +54,11 @@ public class TrainerDto {
         this.certification = certification;
     }
 
-    public int getExperienceYears() {
+    public Integer getExperienceYears() {
         return experienceYears;
     }
 
-    public void setExperienceYears(int experienceYears) {
+    public void setExperienceYears(Integer experienceYears) {
         this.experienceYears = experienceYears;
     }
 
@@ -68,5 +68,13 @@ public class TrainerDto {
 
     public void setSpecialization(Integer specialization) {
         this.specialization = specialization;
+    }
+
+    public String getSpecialisationName() {
+        return specialisationName;
+    }
+
+    public void setSpecialisationName(String specialisationName) {
+        this.specialisationName = specialisationName;
     }
 }

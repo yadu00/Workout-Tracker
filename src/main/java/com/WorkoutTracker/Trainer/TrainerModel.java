@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 
 @Entity
-@Table(name = "tariner_table")
+@Table(name = "trainer_table")
 @Data
 public class TrainerModel {
 
@@ -29,7 +29,7 @@ public class TrainerModel {
     private String certification;
 
     @Column(name = "experienceYears")
-    private int experienceYears;
+    private Integer experienceYears;
 
     @Column(name = "specialization_id")
     private Integer specialization_id;
@@ -39,6 +39,10 @@ public class TrainerModel {
 
     @Column(name = "achievements")
     private String achievements;
+
+    @Column(name = "approved")
+    private Boolean approved;
+
 
     public Integer getTrainer_id() {
         return trainer_id;
@@ -80,11 +84,11 @@ public class TrainerModel {
         this.certification = certification;
     }
 
-    public int getExperienceYears() {
+    public Integer getExperienceYears() {
         return experienceYears;
     }
 
-    public void setExperienceYears(int experienceYears) {
+    public void setExperienceYears(Integer experienceYears) {
         this.experienceYears = experienceYears;
     }
 
@@ -110,5 +114,13 @@ public class TrainerModel {
 
     public void setAchievements(String achievements) {
         this.achievements = achievements;
+    }
+
+    public Boolean getApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
     }
 }

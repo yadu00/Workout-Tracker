@@ -1,18 +1,30 @@
 package com.WorkoutTracker.Trainer;
 
-import com.WorkoutTracker.Excercises.ExcerciseDetails.ExcerciseDetailsModel;
+import com.WorkoutTracker.Dto.ExcerciseDto;
+import com.WorkoutTracker.Dto.LoginDto;
+import com.WorkoutTracker.Dto.WorkoutUpdateDto;
+import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsModel;
+import com.WorkoutTracker.Workouts.WorkoutModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping(path = "/api/trainer")
 public class TrainerController {
+
+
     @Autowired
     private TrainerService trainerService;
+
+
+
     //add trainer
-    @PostMapping(path="/add")
+    @PostMapping(path="/add-trainer")
     public ResponseEntity<?> addDetails(@RequestBody TrainerModel trainerModel){
         try {
             return trainerService.addDetails(trainerModel);
@@ -23,17 +35,19 @@ public class TrainerController {
     }
 
     //login for trainers
-    @PostMapping(path = "/login")
-    public ResponseEntity<?> loginDetails(@RequestParam String email, @RequestParam String password){
+    @PostMapping(path = "/login-trainer")
+    public ResponseEntity<?> loginDetails(@RequestBody LoginDto loginDto){
         try {
-            return trainerService.loginDetails(email,password);
+            return trainerService.loginDetails(loginDto);
         }catch (Exception e){
             e.printStackTrace();
         }
         return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //Add Excercises
+
+
+    //Trainer Add Exercises
     @PostMapping(path="/addExcercises")
     public ResponseEntity<?> addExcercises(@RequestBody ExcerciseDetailsModel excerciseDetailsModel){
         try {
@@ -44,7 +58,15 @@ public class TrainerController {
         return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //view Assigned Users
+    //trainer view exercises
+    @GetMapping(path = "/viewExercises")
+    public ResponseEntity<List<ExcerciseDto>> viewExercises(@RequestParam Integer trainer_id) {
+
+            return trainerService.getExercises(trainer_id);
+
+    }
+
+    //trainer view Assigned Users
     @GetMapping(path = "/viewAssignedUsers")
     public ResponseEntity<?> viewAssignedUsers(@RequestParam Integer trainer_id) {
         try {
@@ -55,7 +77,7 @@ public class TrainerController {
         }
     }
 
-    //select assigned users
+    //trainer select assigned users
     @PostMapping(path = "/selectUser")
     public ResponseEntity<?> selectUser(@RequestParam Integer trainer_id, @RequestParam Integer user_id) {
         try {
@@ -66,22 +88,101 @@ public class TrainerController {
         }
     }
 
-    //schedule workouts
-//    @PostMapping("/schedule-workouts")
-//    public ResponseEntity<?> scheduleWorkouts(@RequestParam Integer userId, @RequestBody List<WorkoutDto> workouts) {
-//      try {
-//          return trainerService.scheduleWorkouts(userId, workouts);
-//      } catch (Exception e) {
-//          e.printStackTrace();
-//          return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-//      }
-//    }
 
-    //add achievements
+
+    //trainer add achievements
     @PostMapping(path="/add-achievements")
-    public ResponseEntity<?> addAchievements(@RequestParam Integer trainer_id){
+    public ResponseEntity<?> addAchievements(@RequestParam Integer trainer_id,@RequestParam String achievements){
         try {
-            return trainerService.addAchievements(trainer_id);
+            return trainerService.addAchievements(trainer_id,achievements);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //reset trainer password
+    @PutMapping(path = "/updateTrainerPassword")
+    public ResponseEntity<?>updatePassword(@RequestParam String email,@RequestParam String password){
+        try {
+            return trainerService.updatePassword(email,password);
+        }catch (Exception e){
+            e.printStackTrace();
+        }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //trainer schedule workouts for assigned users
+    @PostMapping("/schedule-workouts")
+    public ResponseEntity<?> scheduleWorkouts(@RequestBody WorkoutModel workoutModel) {
+        try {
+            return trainerService.scheduleWorkouts(workoutModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //get scheduled workout on days
+    @GetMapping("/viewWorkout")
+    public ResponseEntity<?> viewWorkout(@RequestParam Integer user_id,@RequestParam LocalDate workout,@RequestParam Integer trainer_id) {
+        try{
+            return trainerService.viewWorkout(user_id,workout,trainer_id);
+        }catch (Exception e){
+            e.printStackTrace();
+        }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //trainer update scheduled workouts of user
+    @PutMapping("/update-scheduled-workouts")
+    public ResponseEntity<?> UpdateWorkouts(@RequestParam Integer workout_id, @RequestParam Integer trainer_id, @RequestParam Integer user_id, @RequestBody WorkoutUpdateDto workoutUpdateDto) {
+        try {
+            return trainerService.UpdateWorkouts(workout_id,trainer_id,user_id,workoutUpdateDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //Delete workout scheduled by trainer
+    @DeleteMapping("/DeleteWorkouts")
+    public ResponseEntity<?>DeleteWorkouts(@RequestParam Integer workout_id,@RequestParam Integer trainer_id){
+        try {
+            return trainerService.DeleteWorkouts(workout_id,trainer_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    //View Profile trainer
+    @GetMapping(path = "/ViewProfile")
+    public ResponseEntity<?> ViewProfile(@RequestParam Integer trainer_id){
+        try {
+            return trainerService.ViewProfile(trainer_id);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    //Edit Profile trainer
+    @PutMapping(path = "/EditProfile")
+    public ResponseEntity<?> EditProfile(@RequestParam Integer trainer_id, @RequestBody TrainerModel trainerModel){
+        try {
+            return trainerService.EditProfile(trainer_id,trainerModel);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //Delete Account trainer
+    @DeleteMapping (path = "/DeleteProfile")
+    public ResponseEntity<?> DeleteProfile(@RequestParam Integer trainer_id){
+        try {
+            return trainerService.DeleteProfile(trainer_id);
         }catch (Exception e){
             e.printStackTrace();
         }

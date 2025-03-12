@@ -1,4 +1,4 @@
-package com.WorkoutTracker.Excercises.ExcerciseCategory;
+package com.WorkoutTracker.Exercises.ExerciseCategory;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

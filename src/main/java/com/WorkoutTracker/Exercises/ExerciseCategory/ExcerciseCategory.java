@@ -1,9 +1,7 @@
-package com.WorkoutTracker.Excercises.ExcerciseCategory;
+package com.WorkoutTracker.Exercises.ExerciseCategory;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.Optional;
 
 @Entity
 @Table(name = "ExcerciseCategory")
