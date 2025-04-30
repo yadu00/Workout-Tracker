@@ -3,6 +3,7 @@ package com.WorkoutTracker.Dto;
 public class LoginDto {
     private String email;
     private  String password;
+    private Integer statusID;
 
     public String getEmail() {
         return email;
@@ -18,5 +19,13 @@ public class LoginDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getStatusID() {
+        return statusID;
+    }
+
+    public void setStatusID(Integer statusID) {
+        this.statusID = statusID;
     }
 }

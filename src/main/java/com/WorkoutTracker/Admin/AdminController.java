@@ -6,6 +6,7 @@ import com.WorkoutTracker.Dto.UserDto;
 import com.WorkoutTracker.Exercises.ExerciseCategory.ExcerciseCategory;
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
 import com.WorkoutTracker.Gender.GenderModel;
+import com.WorkoutTracker.SignUpStatus.StatusModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -139,4 +140,39 @@ public class AdminController {
 //        }
 //        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
+    //Add Registration Status
+    @PostMapping(path = "/AddRegStatus")
+    public ResponseEntity<?> addStatus(@RequestBody StatusModel statusModel){
+        try {
+            return adminService.addStatus(statusModel);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    //Approve Registration
+    @PutMapping(path = "/ApproveTrainer")
+    public ResponseEntity<?> ApproveTrainer(@RequestParam Integer trainer_id,@RequestParam Integer statusId){
+        try {
+            return adminService.ApproveTrainer(trainer_id,statusId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    //view trainer signup Requests
+    @GetMapping(path = "/viewRequests")
+    public ResponseEntity<List<TrainerDto>> listrequests() {
+
+        return adminService.listrequests();
+    }
+    //view trainer details
+    @GetMapping(path = "/TrainerDetails")
+    public ResponseEntity<?> viewtrainer(@RequestParam Integer trainer_id) {
+
+        return adminService.viewtrainer(trainer_id);
+    }
+
+
 }

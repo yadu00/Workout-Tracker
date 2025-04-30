@@ -10,6 +10,8 @@ public class UserDto {
     private String email;
     private String password;
     private String gender_name;
+    private double bmi;
+    private double weight;
 
     public UserDto(String name, String email) {
         this.name = name;
@@ -58,5 +60,21 @@ public class UserDto {
 
     public void setGender_name(String gender_name) {
         this.gender_name = gender_name;
+    }
+
+    public double getBmi() {
+        return bmi;
+    }
+
+    public void setBmi(double bmi) {
+        this.bmi = bmi;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 }

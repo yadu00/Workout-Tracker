@@ -14,6 +14,8 @@ public class TrainerDto {
     private Integer experienceYears;
     private Integer specialization;
     private String specialisationName;
+    private String status;
+
     public Integer getTrainer_id() {
         return trainer_id;
     }
@@ -76,5 +78,13 @@ public class TrainerDto {
 
     public void setSpecialisationName(String specialisationName) {
         this.specialisationName = specialisationName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

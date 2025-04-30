@@ -45,23 +45,6 @@ public class UserDetails {
     @Column(name = "goal")
     private String goal;
 
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getGoal() {
-        return goal;
-    }
-
-    public void setGoal(String goal) {
-        this.goal = goal;
-    }
-
     public Integer getUserDetails_id() {
         return userDetails_id;
     }
@@ -70,20 +53,12 @@ public class UserDetails {
         this.userDetails_id = userDetails_id;
     }
 
-    public double getBmi() {
-        return bmi;
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public void setBmi(double bmi) {
-        this.bmi = bmi;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
 
     public double getWeight() {
@@ -94,12 +69,28 @@ public class UserDetails {
         this.weight = weight;
     }
 
-    public Integer getUser_id() {
-        return user_id;
+    public double getHeight() {
+        return height;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getBmi() {
+        return bmi;
+    }
+
+    public void setBmi(double bmi) {
+        this.bmi = bmi;
+    }
+
+    public double getUpdated_bmi() {
+        return updated_bmi;
+    }
+
+    public void setUpdated_bmi(double updated_bmi) {
+        this.updated_bmi = updated_bmi;
     }
 
     public LocalDate getBmi_date() {
@@ -118,11 +109,19 @@ public class UserDetails {
         this.bmi_Updated_date = bmi_Updated_date;
     }
 
-    public double getUpdated_bmi() {
-        return updated_bmi;
+    public String getGender() {
+        return gender;
     }
 
-    public void setUpdated_bmi(double updated_bmi) {
-        this.updated_bmi = updated_bmi;
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGoal() {
+        return goal;
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
     }
 }

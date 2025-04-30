@@ -9,6 +9,8 @@ import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecializationRepo;
 import com.WorkoutTracker.Gender.GenderModel;
 import com.WorkoutTracker.Gender.GenderRepo;
+import com.WorkoutTracker.SignUpStatus.StatusModel;
+import com.WorkoutTracker.SignUpStatus.StatusRepo;
 import com.WorkoutTracker.Trainer.TrainerModel;
 import com.WorkoutTracker.User.Registration.UserModel;
 import com.WorkoutTracker.Trainer.TrainerRepo;
@@ -20,9 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 @Service
 
 public class AdminService {
@@ -47,6 +48,8 @@ public class AdminService {
     @Autowired
     private WeekDaysRepo weekDaysRepo;
 
+    @Autowired
+    private StatusRepo statusRepo;
 
 
     //add admin account details
@@ -65,7 +68,11 @@ public class AdminService {
     public ResponseEntity<?> loginDetails(AdminLoginDto adminLoginDto) {
         Optional<AdminModel> adminModelOptional = adminRepo.findByUsernameAndPassword(adminLoginDto.getUsername(), adminLoginDto.getPassword());
         if (adminModelOptional.isPresent()){
-            return new ResponseEntity<>("Logged in as Admin", HttpStatus.OK);
+            Integer admin_id=adminModelOptional.get().getId();
+            Map<String,Object> loginres=new HashMap<>();
+            loginres.put("message","Login success");
+            loginres.put("admin_id",admin_id);
+            return new ResponseEntity<>(loginres, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(" Admin Credentials Incorrect",HttpStatus.NOT_FOUND);
         }
@@ -194,4 +201,81 @@ public class AdminService {
         }
         return new ResponseEntity<>("Trainer Not Found",HttpStatus.NOT_FOUND);
     }
+
+    public ResponseEntity<?> addStatus(StatusModel statusModel) {
+        StatusModel statusModel1 =new StatusModel();
+        statusModel1.setStatus(statusModel.getStatus());
+        statusRepo.save(statusModel1);
+        return new ResponseEntity<>(statusModel1, HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<?> ApproveTrainer(Integer trainerId, Integer statusId) {
+        Optional<TrainerModel> trainerModelOptional=trainerRepo.findById(trainerId);
+        Optional<StatusModel> statusModelOptional=statusRepo.findById(statusId);
+        if (statusModelOptional.isPresent()){
+            if (trainerModelOptional.isPresent()) {
+                TrainerModel trainerModel = trainerModelOptional.get();
+                trainerModel.setStatusID(statusId);
+                trainerRepo.save(trainerModel);
+                return new ResponseEntity<>("Trainer status Approved",HttpStatus.OK);
+            }else
+                return new ResponseEntity<>("Trainer Not found",HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>("Status Not found",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<List<TrainerDto>> listrequests() {
+        List<TrainerDto> dto = new ArrayList<>();
+        List<TrainerModel> trainerModels = trainerRepo.findAll();
+        if (!trainerModels.isEmpty()) {
+            for (TrainerModel trainerModel : trainerModels) {
+                if (!trainerModel.getStatusID().equals(1)) continue;
+                TrainerDto trainerDto1 = new TrainerDto();
+                trainerDto1.setTrainer_id(trainerModel.getTrainer_id());
+                trainerDto1.setName(trainerModel.getName());
+                Optional<StatusModel>statusModelOptional=statusRepo.findById(trainerModel.getStatusID());
+                if (statusModelOptional.isPresent()){
+                    StatusModel statusModel=statusModelOptional.get();
+                    trainerDto1.setStatus(statusModel.getStatus());
+
+                }
+
+                dto.add(trainerDto1);
+            }
+
+        }
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> viewtrainer(Integer trainerId) {
+        Optional<TrainerModel> trainerModelOptional = trainerRepo.findById(trainerId);
+        if (trainerModelOptional.isPresent()) {
+            TrainerModel trainerModel = trainerModelOptional.get();
+            TrainerDto trainerDto = new TrainerDto();
+            trainerDto.setTrainer_id(trainerModel.getTrainer_id());
+            trainerDto.setName(trainerModel.getName());
+            trainerDto.setEmail(trainerModel.getEmail());
+            trainerDto.setPassword(trainerModel.getPassword());
+            trainerDto.setCertification(trainerModel.getCertification());
+            trainerDto.setExperienceYears(trainerModel.getExperienceYears());
+            Optional<ExcerciseSpecialisationModel> excerciseSpecialisationModel = excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
+            if (excerciseSpecialisationModel.isPresent()) {
+                trainerDto.setSpecialisationName(excerciseSpecialisationModel.get().getSpecialization_name());
+            } else {
+                trainerDto.setSpecialisationName("Not specified");
+            }
+
+            return new ResponseEntity<>(trainerDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Trainer not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
+
+
+
+

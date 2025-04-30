@@ -43,7 +43,19 @@ public class TrainerModel {
     @Column(name = "approved")
     private Boolean approved;
 
+    @Column(name = "statusID")
+    private Integer statusID;
 
+    @Column(columnDefinition = "TEXT")
+    private String about;
+
+    @Column(columnDefinition = "TEXT")
+    private String specialities;
+
+
+    public TrainerModel(){
+        this.statusID=1;
+    }
     public Integer getTrainer_id() {
         return trainer_id;
     }
@@ -122,5 +134,29 @@ public class TrainerModel {
 
     public void setApproved(Boolean approved) {
         this.approved = approved;
+    }
+
+    public Integer getStatusID() {
+        return statusID;
+    }
+
+    public void setStatusID(Integer statusID) {
+        this.statusID = statusID;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public String getSpecialities() {
+        return specialities;
+    }
+
+    public void setSpecialities(String specialities) {
+        this.specialities = specialities;
     }
 }
