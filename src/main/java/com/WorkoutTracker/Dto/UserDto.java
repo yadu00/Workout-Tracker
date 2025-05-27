@@ -12,6 +12,15 @@ public class UserDto {
     private String gender_name;
     private double bmi;
     private double weight;
+    private double height;
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
 
     public UserDto(String name, String email) {
         this.name = name;

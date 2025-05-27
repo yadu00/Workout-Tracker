@@ -1,8 +1,7 @@
-package com.WorkoutTracker.User.Registration;
+package com.WorkoutTracker.Services;
 
 import com.WorkoutTracker.Dto.*;
-import com.WorkoutTracker.Exercises.ExerciseCategory.ExcerciseCategory;
-import com.WorkoutTracker.Exercises.ExerciseCategory.ExcerciseCategoryRepo;
+
 import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsModel;
 import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsRepo;
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
@@ -10,13 +9,17 @@ import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecializationRepo;
 import com.WorkoutTracker.Gender.GenderModel;
 import com.WorkoutTracker.Gender.GenderRepo;
 import com.WorkoutTracker.Trainer.TrainerModel;
-import com.WorkoutTracker.User.UserDetails.UserDetails;
+import com.WorkoutTracker.Reports.UserDetails;
 import com.WorkoutTracker.Trainer.TrainerRepo;
-import com.WorkoutTracker.User.UserDetails.UserDetailsRepo;
+import com.WorkoutTracker.Reports.UserDetailsRepo;
+import com.WorkoutTracker.User.UserModel;
+import com.WorkoutTracker.User.UserRepo;
 import com.WorkoutTracker.UserTrainer.UserTrainerModel;
 import com.WorkoutTracker.UserTrainer.UserTrainerRepo;
 import com.WorkoutTracker.WeekDays.WeekDaysModel;
 import com.WorkoutTracker.WeekDays.WeekDaysRepo;
+import com.WorkoutTracker.WeightLog.WeightModel;
+import com.WorkoutTracker.WeightLog.WeightRepo;
 import com.WorkoutTracker.Workouts.WorkoutModel;
 import com.WorkoutTracker.Workouts.WorkoutRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -51,8 +55,6 @@ public class UserService {
     @Autowired
     private ExcerciseDetailsRepo excerciseDetailsRepo;
 
-    @Autowired
-    private ExcerciseCategoryRepo excerciseCategoryRepo;
 
     @Autowired
     private WorkoutRepo workoutRepo;
@@ -62,6 +64,9 @@ public class UserService {
 
     @Autowired
     private WeekDaysRepo weekDaysRepo;
+
+    @Autowired
+    private WeightRepo weightRepo;
 
 
     //add user account
@@ -114,6 +119,20 @@ public class UserService {
                     trainerDto1.setCertification(trainerModel.getCertification());
                     trainerDto1.setSpecialization(trainerModel.getSpecialization_id());
                     trainerDto1.setExperienceYears(trainerModel.getExperienceYears());
+                List<UserTrainerModel> userTrainerModelList = userTrainerRepo.findByTrainerId(trainerModel.getTrainer_id());
+                Integer sum = 0;
+                Integer count = 0;
+
+                for (UserTrainerModel userTrainerModel : userTrainerModelList) {
+                    Integer rating = userTrainerModel.getRating();
+                    if (rating != null) {
+                        sum += rating;
+                        count++;
+                    }
+                }
+
+                Integer average = count > 0 ? sum / count : 0;
+                trainerDto1.setRating(average);
                     dto.add(trainerDto1);
                 }
 
@@ -211,11 +230,7 @@ public class UserService {
                 ExcerciseDto excerciseDto = new ExcerciseDto();
                 excerciseDto.setExercise_name(excerciseDetailsModel.getExercise_name());
                 excerciseDto.setExercise_description(excerciseDetailsModel.getExercise_description());
-                Optional<ExcerciseCategory> excerciseCategoryOptional = excerciseCategoryRepo.findById(excerciseDetailsModel.getCategory_id());
-                if (excerciseCategoryOptional.isPresent()) {
-                    ExcerciseCategory excerciseCategory = excerciseCategoryOptional.get();
-                    excerciseDto.setCategory(excerciseCategory.getCategory_name());
-                }
+
                 dtos.add(excerciseDto);
             }
 
@@ -238,61 +253,42 @@ public class UserService {
     }
 
 
-//    public ResponseEntity<?> getAllWorkoutDays(Integer userId) {
-//        List<String> workoutDays = workoutRepo.findWorkoutDaysByUserId(userId);
-//
-//        if (workoutDays.isEmpty()) {
-//            return new ResponseEntity<>("No workout days found for user", HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<>(workoutDays, HttpStatus.OK);
-//    }
 
 
-//    //get scheduled workout on days
-//    public ResponseEntity<?> viewWorkout(Integer userId, LocalDate workout,Integer trainerId) {
-////        List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndWorkoutAndTrainerId(userId,workout,trainerId);
-//        List<WorkoutDto> dtos = new ArrayList<>();
-//        if (!workoutModelList.isEmpty()) {
-//            for (WorkoutModel workoutModel : workoutModelList) {
-//                WorkoutDto workoutDto = new WorkoutDto();
-////                workoutDto.setWorkout_name(workoutModel.getWorkout_name());
-////
-////                workoutDto.setSets(workoutModel.getSets());
-////                workoutDto.setReps(workoutModel.getReps());
-//
-//                Optional<ExcerciseDetailsModel> excerciseDetailsModelOptional = excerciseDetailsRepo.findById(workoutModel.getExercise_id());
-//                if (excerciseDetailsModelOptional.isPresent()) {
-//                    ExcerciseDetailsModel excerciseDetailsModel = excerciseDetailsModelOptional.get();
-//                    workoutDto.setExcercise_name(excerciseDetailsModel.getExercise_name());
-//
-//                }
-//                dtos.add(workoutDto);
-//            }
-//            return new ResponseEntity<>(dtos, HttpStatus.OK);
-//        }
-//
-//        return new ResponseEntity<>("No workouts found", HttpStatus.NOT_FOUND);
-//    }
 
 
-    //list all trainers
     public ResponseEntity<List<TrainerDto>> getallTrainers() {
         List<TrainerDto> dto = new ArrayList<>();
         List<TrainerModel> trainerModels = trainerRepo.findAll();
-        if (!trainerModels.isEmpty()) {
-            for (TrainerModel trainerModel : trainerModels) {
-                TrainerDto trainerDto1 = new TrainerDto();
-                trainerDto1.setTrainer_id(trainerModel.getTrainer_id());
-                trainerDto1.setName(trainerModel.getName());
-                trainerDto1.setCertification(trainerModel.getCertification());
-                trainerDto1.setExperienceYears(trainerModel.getExperienceYears());
-                dto.add(trainerDto1);
+
+        for (TrainerModel trainerModel : trainerModels) {
+            TrainerDto trainerDto1 = new TrainerDto();
+            trainerDto1.setTrainer_id(trainerModel.getTrainer_id());
+            trainerDto1.setName(trainerModel.getName());
+            trainerDto1.setCertification(trainerModel.getCertification());
+            trainerDto1.setExperienceYears(trainerModel.getExperienceYears());
+
+            List<UserTrainerModel> userTrainerModelList = userTrainerRepo.findByTrainerId(trainerModel.getTrainer_id());
+            Integer sum = 0;
+            Integer count = 0;
+
+            for (UserTrainerModel userTrainerModel : userTrainerModelList) {
+                Integer rating = userTrainerModel.getRating();
+                if (rating != null) {
+                    sum += rating;
+                    count++;
+                }
             }
 
+            Integer average = count > 0 ? sum / count : 0;
+            trainerDto1.setRating(average);
+
+            dto.add(trainerDto1);
         }
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+
 
 
     //Edit Profile user
@@ -350,32 +346,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<?> viewTrainer(Integer user_id, Integer trainer_id) {
-        List<TrainerDto> trainerDtos = new ArrayList<>();
-        List<UserTrainerModel> userTrainerModels = userTrainerRepo.findByUserIdAndTrainerId(user_id, trainer_id);
-        if (!userTrainerModels.isEmpty()) {
-            for (UserTrainerModel userTrainerModel : userTrainerModels) {
-                TrainerDto trainerDto = new TrainerDto();
-                Optional<TrainerModel> trainerModelOptional = trainerRepo.findById(userTrainerModel.getTrainer_id());
-                if (trainerModelOptional.isPresent()) {
-                    TrainerModel trainerModel = trainerModelOptional.get();
-                    trainerDto.setName(trainerModel.getName());
-                    trainerDto.setEmail(trainerModel.getEmail());
-//                    Optional<GenderModel> genderModelOptional = genderRepo.findById(userModel.getGender_id());
-//                    if (genderModelOptional.isPresent()) {
-//                        GenderModel genderModel = genderModelOptional.get();
-//                        userDto.setGender_name(genderModel.getGenderName());
-//                    }
 
-                }
-                trainerDtos.add(trainerDto);
-            }
-            return new ResponseEntity<>(trainerDtos, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(trainerDtos, HttpStatus.NOT_FOUND);
-        }
-
-    }
 
     public ResponseEntity<?> viewBmi(Integer userId) {
         Optional<UserDetails> userDetailsOptional = userDetailsRepo.findByUser_Id(userId);
@@ -383,6 +354,8 @@ public class UserService {
             UserDetails userDetails = userDetailsOptional.get();
             UserDto userDto = new UserDto();
             userDto.setBmi(userDetails.getBmi());
+            userDto.setWeight(userDetails.getWeight());
+            userDto.setHeight(userDetails.getHeight());
             return new ResponseEntity<>(userDto, HttpStatus.OK);
 
         }
@@ -404,6 +377,7 @@ public class UserService {
                 workoutDto.setEquipments(workoutModel.getEquipments());
                 workoutDto.setWeights(workoutModel.getWeights());
                 workoutDto.setStatus(workoutModel.getStatus());
+                workoutDto.setDate(workoutModel.getWorkoutdate());
 
                 Optional<ExcerciseDetailsModel> excerciseDetailsModelOptional = excerciseDetailsRepo.findById(workoutModel.getExercise_id());
                 if (excerciseDetailsModelOptional.isPresent()) {
@@ -474,6 +448,11 @@ public class UserService {
         return ResponseEntity.ok(count);
     }
 
+    public ResponseEntity<?> totalworkoutspending(Integer userId) {
+        Integer count = workoutRepo.countByUserIdAndStatus(userId, 1);
+        return ResponseEntity.ok(count);
+    }
+
     public ResponseEntity<?> viewtodaysworkouts(Integer userId, LocalDate workoutdate) {
         List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndWorkoutdate(userId, workoutdate);
         List<WorkoutDto> dtos = new ArrayList<>();
@@ -495,5 +474,65 @@ public class UserService {
 
         return new ResponseEntity<>("No workouts found", HttpStatus.NOT_FOUND);
 
+    }
+
+    public ResponseEntity<?> logWeight(WeightModel weightModel,Integer user_id) {
+        WeightModel weightModel1=new WeightModel();
+        weightModel1.setUser_id(user_id);
+        weightModel1.setWeight(weightModel.getWeight());
+        weightModel1.setLogDate(LocalDate.now());
+        weightModel1.setBmi(weightModel.getBmi());
+        weightRepo.save(weightModel1);
+        return new ResponseEntity<>(weightModel1, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> weightHistory(Integer userId) {
+        List<WeightModel> weightHistory = weightRepo.findAllByUser_Id(userId);
+
+        if (weightHistory != null && !weightHistory.isEmpty()) {
+            return new ResponseEntity<>(weightHistory, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("No details found", HttpStatus.NOT_FOUND);
+    }
+
+
+    public ResponseEntity<?> addRating(Integer rating, Integer userId) {
+        Optional<UserTrainerModel> userTrainerModelOptional=userTrainerRepo.findByUserId(userId);
+        if (userTrainerModelOptional.isPresent()){
+            UserTrainerModel userTrainerModel1=userTrainerModelOptional.get();
+            if (userTrainerModel1.getRating() != null) {
+                return new ResponseEntity<>("You have already rated this trainer.", HttpStatus.CONFLICT);
+            }
+            userTrainerModel1.setRating(rating);
+            userTrainerModel1.setCreatedAt(LocalDateTime.now());
+            userTrainerRepo.save(userTrainerModel1);
+            return new ResponseEntity<>(userTrainerModel1,HttpStatus.OK);
+        }
+        return new ResponseEntity<>("User Not Found",HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<?> showRating(Integer trainerId) {
+        List<UserTrainerModel> userTrainerModelList = userTrainerRepo.findByTrainerId(trainerId);
+        int sum = 0;
+        int count = 0;
+        if (!userTrainerModelList.isEmpty()) {
+            for (UserTrainerModel userTrainerModel : userTrainerModelList) {
+                Integer rating = userTrainerModel.getRating();
+                if (rating != null) {
+                    sum =sum+ rating;
+                    count++;
+                }
+            }
+            if (count == 0) {
+                return ResponseEntity.ok("This trainer has not been rated yet.");
+            }
+
+            double average = (double) sum / count;
+            return ResponseEntity.ok(average);
+
+
+        }
+        return new ResponseEntity("No trainer found.",HttpStatus.NOT_FOUND);
     }
 }

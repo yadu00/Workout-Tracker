@@ -2,6 +2,9 @@ package com.WorkoutTracker.Dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.relational.core.sql.In;
+
+import java.time.LocalDate;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WorkoutDto {
 
@@ -13,6 +16,7 @@ public class WorkoutDto {
     private String equipments;
     private String duration;
     private Integer status;
+    private LocalDate date;
 
 
     public String getExcercise_name() {
@@ -77,5 +81,13 @@ public class WorkoutDto {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

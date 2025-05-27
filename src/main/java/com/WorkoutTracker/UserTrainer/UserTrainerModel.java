@@ -1,9 +1,9 @@
 package com.WorkoutTracker.UserTrainer;
 
-import com.WorkoutTracker.Trainer.TrainerModel;
-import com.WorkoutTracker.User.Registration.UserModel;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_trainer_table")
@@ -18,6 +18,12 @@ public class UserTrainerModel {
 
     @Column(name = "trainer_id")
     private Integer trainer_id;
+
+    @Column(name = "rating")
+    private Integer rating;
+
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt;
 
     public Integer getId() {
         return id;
@@ -43,5 +49,21 @@ public class UserTrainerModel {
 
     public void setTrainer_id(Integer trainer_id) {
         this.trainer_id = trainer_id;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

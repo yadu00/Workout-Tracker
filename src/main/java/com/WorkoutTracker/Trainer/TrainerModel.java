@@ -52,6 +52,14 @@ public class TrainerModel {
     @Column(columnDefinition = "TEXT")
     private String specialities;
 
+    @Column(name = "Mobile")
+    private String mobile;
+
+
+    @Lob
+    @Column(name = "cert")
+    private byte[] cert;
+
 
     public TrainerModel(){
         this.statusID=1;
@@ -158,5 +166,21 @@ public class TrainerModel {
 
     public void setSpecialities(String specialities) {
         this.specialities = specialities;
+    }
+
+    public byte[] getCert() {
+        return cert;
+    }
+
+    public void setCert(byte[] cert) {
+        this.cert = cert;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }

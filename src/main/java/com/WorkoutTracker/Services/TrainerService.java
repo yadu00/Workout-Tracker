@@ -1,4 +1,4 @@
-package com.WorkoutTracker.Trainer;
+package com.WorkoutTracker.Services;
 
 import com.WorkoutTracker.Dto.*;
 import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsModel;
@@ -7,10 +7,12 @@ import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecializationRepo;
 import com.WorkoutTracker.Gender.GenderModel;
 import com.WorkoutTracker.Gender.GenderRepo;
-import com.WorkoutTracker.User.Registration.UserModel;
-import com.WorkoutTracker.User.Registration.UserRepo;
-import com.WorkoutTracker.User.UserDetails.UserDetails;
-import com.WorkoutTracker.User.UserDetails.UserDetailsRepo;
+import com.WorkoutTracker.Trainer.TrainerModel;
+import com.WorkoutTracker.Trainer.TrainerRepo;
+import com.WorkoutTracker.User.UserModel;
+import com.WorkoutTracker.User.UserRepo;
+import com.WorkoutTracker.Reports.UserDetails;
+import com.WorkoutTracker.Reports.UserDetailsRepo;
 import com.WorkoutTracker.UserTrainer.UserTrainerModel;
 import com.WorkoutTracker.UserTrainer.UserTrainerRepo;
 import com.WorkoutTracker.WeekDays.WeekDaysModel;
@@ -22,7 +24,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -57,7 +61,7 @@ public class TrainerService {
 
 
     //add trainer
-    public ResponseEntity<?> addDetails(TrainerModel trainerModel) {
+    public ResponseEntity<?> addDetails(TrainerModel trainerModel, MultipartFile cert) throws IOException {
         TrainerModel trainerModel1 =new TrainerModel();
         trainerModel1.setName(trainerModel.getName());
         trainerModel1.setEmail(trainerModel.getEmail());
@@ -65,6 +69,7 @@ public class TrainerService {
         trainerModel1.setCertification(trainerModel.getCertification());
         trainerModel1.setExperienceYears(trainerModel.getExperienceYears());
         trainerModel1.setSpecialization_id(trainerModel.getSpecialization_id());
+        trainerModel1.setCert(cert.getBytes());
         trainerModel1.setCreated_date(LocalDate.now());
         trainerRepo.save(trainerModel1);
         return new ResponseEntity<>(trainerModel1, HttpStatus.OK);
@@ -121,7 +126,7 @@ public class TrainerService {
     }
 
 
-    //trainer view Assigned Users
+    //trainer view clients
     public ResponseEntity<?> getAssignedUsers(Integer trainer_id) {
         List<UserDto> userDtoList = new ArrayList<>();
         List<UserTrainerModel>userTrainerModels=userTrainerRepo.findByTrainerId(trainer_id);
@@ -156,16 +161,7 @@ public class TrainerService {
 
     }
 
-    //trainer select assigned users
-    public ResponseEntity<?> selectUser(Integer trainerId, Integer userId) {
-        Optional<UserModel> userModelOptional = userRepo.findById(userId);
-        Optional<TrainerModel> trainerModelOptional = trainerRepo.findById(trainerId);
-        if (userModelOptional.isPresent() && trainerModelOptional.isPresent()) {
-            return new ResponseEntity<>("User Selected", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("User or Trainer not found", HttpStatus.NOT_FOUND);
-        }
-    }
+
 
 
     //trainer add achievements
@@ -236,23 +232,7 @@ public class TrainerService {
 
 
 
-    public ResponseEntity<?> getWeekDays(Integer userId, String week) {
-        List<WeekDaysModel> weekDaysList = weekDaysRepo.findByUser_IdAndWeek(userId, week);
-        List<WeeKDayDto> dtoList = new ArrayList<>();
 
-        for (WeekDaysModel weekDaysModel : weekDaysList) {
-            WeeKDayDto weeKDayDto = new WeeKDayDto();
-            weeKDayDto.setUser_id(weekDaysModel.getUser_id());
-            weeKDayDto.setTrainer_id(weekDaysModel.getTrainer_id());
-            weeKDayDto.setDay(weekDaysModel.getDay());
-            weeKDayDto.setWeek(weekDaysModel.getWeek());
-            weeKDayDto.setName(weekDaysModel.getName());
-            weeKDayDto.setWeekdayId(weekDaysModel.getWeekdayId());
-            dtoList.add(weeKDayDto);
-        }
-
-        return new ResponseEntity<>(dtoList, HttpStatus.OK);
-    }
     public ResponseEntity<?> getWeekDay(Integer userId) {
         List<WeekDaysModel> weekDaysList = weekDaysRepo.findByUser_Id(userId);
         List<WeeKDayDto> dtoList = new ArrayList<>();
@@ -428,17 +408,7 @@ public class TrainerService {
         }
     }
 
-    public ResponseEntity<?> specialities(Integer trainerId, String specialities) {
-        Optional<TrainerModel> trainerModelOptional = trainerRepo.findById(trainerId);
-        if (trainerModelOptional.isPresent()) {
-            TrainerModel trainerModel = trainerModelOptional.get();
-            trainerModel.setAbout(specialities);
-            trainerRepo.save(trainerModel);
-            return new ResponseEntity<>("specialities added successfully", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Trainer Not found", HttpStatus.NOT_FOUND);
-        }
-    }
+
 
     public ResponseEntity<?> showdescription(Integer trainerId) {
         Optional<TrainerModel> trainerModelOptional = trainerRepo.findById(trainerId);
@@ -450,5 +420,16 @@ public class TrainerService {
             return new ResponseEntity<>("Trainer Not found", HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    public ResponseEntity<?> deleteExercise(Integer trainerId,Integer exercise_id) {
+        Optional<ExcerciseDetailsModel> excerciseDetailsModelOptional=excerciseDetailsRepo.findByTrainerIdAndExercise_Id(trainerId,exercise_id);
+        if (excerciseDetailsModelOptional.isPresent()){
+            ExcerciseDetailsModel excerciseDetailsModel=excerciseDetailsModelOptional.get();
+            excerciseDetailsRepo.delete(excerciseDetailsModel);
+            return new ResponseEntity<>("Exercise deleted",HttpStatus.OK);
+
+        }
+        return new ResponseEntity<>("No exercise found for this trainer",HttpStatus.NO_CONTENT);
     }
 }

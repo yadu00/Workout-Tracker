@@ -1,19 +1,20 @@
-package com.WorkoutTracker.Trainer;
+package com.WorkoutTracker.Controller;
 
 import com.WorkoutTracker.Dto.ExcerciseDto;
 import com.WorkoutTracker.Dto.LoginDto;
-import com.WorkoutTracker.Dto.WeeKDayDto;
 import com.WorkoutTracker.Dto.WorkoutUpdateDto;
 import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsModel;
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Trainer.TrainerModel;
+import com.WorkoutTracker.Services.TrainerService;
 import com.WorkoutTracker.WeekDays.WeekDaysModel;
 import com.WorkoutTracker.Workouts.WorkoutModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -28,9 +29,9 @@ public class TrainerController {
 
     //add trainer
     @PostMapping(path="/add-trainer")
-    public ResponseEntity<?> addDetails(@RequestBody TrainerModel trainerModel){
+    public ResponseEntity<?> addDetails(@RequestPart TrainerModel trainerModel, @RequestPart MultipartFile cert){
         try {
-            return trainerService.addDetails(trainerModel);
+            return trainerService.addDetails(trainerModel,cert);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -50,7 +51,7 @@ public class TrainerController {
 
 
 
-    //Trainer Add Exercises
+    //Add Exercises
     @PostMapping(path="/addExcercises")
     public ResponseEntity<?> addExcercises(@RequestBody ExcerciseDetailsModel excerciseDetailsModel){
         try {
@@ -61,7 +62,9 @@ public class TrainerController {
         return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //trainer view exercises
+
+
+    //view exercises
     @GetMapping(path = "/viewExercises")
     public ResponseEntity<List<ExcerciseDto>> viewExercises(@RequestParam Integer trainer_id) {
 
@@ -69,8 +72,8 @@ public class TrainerController {
 
     }
 
-    //trainer view Assigned Users
-    @GetMapping(path = "/viewAssignedUsers")
+    //view clients
+    @GetMapping(path = "/viewClients")
     public ResponseEntity<?> viewAssignedUsers(@RequestParam Integer trainer_id) {
         try {
             return trainerService.getAssignedUsers(trainer_id);
@@ -80,20 +83,9 @@ public class TrainerController {
         }
     }
 
-    //trainer select assigned users
-    @PostMapping(path = "/selectUser")
-    public ResponseEntity<?> selectUser(@RequestParam Integer trainer_id, @RequestParam Integer user_id) {
-        try {
-            return trainerService.selectUser(trainer_id,user_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 
-
-    //trainer add achievements
+    //add achievements
     @PostMapping(path="/add-achievements")
     public ResponseEntity<?> addAchievements(@RequestParam Integer trainer_id,@RequestParam String achievements){
         try {
@@ -114,7 +106,7 @@ public class TrainerController {
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //trainer schedule workouts for assigned users
+    //schedule workouts
     @PostMapping("/schedule-workouts")
     public ResponseEntity<?> scheduleWorkouts(@RequestBody WorkoutModel workoutModel) {
         try {
@@ -124,8 +116,10 @@ public class TrainerController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    //trainer schedule workouts for assigned users
-    @PostMapping("/addweekdays")
+
+
+    //schedule weekly workouts
+    @PostMapping("/addweeklyworkout")
     public ResponseEntity<?> addweekdays(@RequestBody List<WeekDaysModel> weekDaysModel) {
         try {
             return trainerService.addWeekdays(weekDaysModel);
@@ -134,6 +128,8 @@ public class TrainerController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //view scheduled weekly workouts
     @GetMapping("/getweekday")
     public ResponseEntity<?> getWeekDay(@RequestParam Integer user_id) {
         try {
@@ -143,17 +139,9 @@ public class TrainerController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/getweekdays")
-    public ResponseEntity<?> getWeekDays(@RequestParam Integer user_id, @RequestParam String week) {
-        try {
-            return trainerService.getWeekDays(user_id,week);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
-   //get scheduled workout on days
+
+   //view scheduled exercises on days
     @GetMapping("/viewWorkout")
     public ResponseEntity<?> viewWorkout(@RequestParam Integer user_id,@RequestParam Integer weekdayId) {
         try{
@@ -162,6 +150,8 @@ public class TrainerController {
             e.printStackTrace();
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 
     //trainer update scheduled workouts of user
     @PutMapping("/update-scheduled-workouts")
@@ -186,7 +176,7 @@ public class TrainerController {
     }
 
 
-    //View Profile trainer
+    //View Profile
     @GetMapping(path = "/ViewProfile")
     public ResponseEntity<?> ViewProfile(@RequestParam Integer trainer_id){
         try {
@@ -220,8 +210,8 @@ public class TrainerController {
         return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //trainer select specialisation
-    @GetMapping(path = "/viewSpecialisation")
+    //view specialization
+    @GetMapping(path = "/viewSpecialization")
     public ResponseEntity<List<ExcerciseSpecialisationModel>> viewSpecialisation() {
 
         return trainerService.viewSpecialisation();
@@ -229,8 +219,8 @@ public class TrainerController {
     }
 
 
-    //trainer add description
-    @PutMapping("/description")
+    //create about
+    @PutMapping("/createabout")
     public ResponseEntity<?> description(@RequestParam Integer trainer_id,@RequestParam String about) {
         try {
             return trainerService.description(trainer_id,about);
@@ -239,8 +229,8 @@ public class TrainerController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    //trainer show description
-    @GetMapping("/showdescription")
+    //view about
+    @GetMapping("/viewabout")
     public ResponseEntity<?> showdescription(@RequestParam Integer trainer_id) {
         try {
             return trainerService.showdescription(trainer_id);
@@ -249,16 +239,18 @@ public class TrainerController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    //trainer add description
-    @PutMapping("/specialities")
-    public ResponseEntity<?> specialities(@RequestParam  Integer trainer_id,@RequestParam  String specialities) {
+
+    //delete exercise
+    @DeleteMapping("/deleteExercise")
+    public ResponseEntity<?> deleteExercise(@RequestParam Integer trainer_id,@RequestParam Integer exercise_id) {
         try {
-            return trainerService.specialities(trainer_id,specialities);
+            return trainerService.deleteExercise(trainer_id,exercise_id);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 }

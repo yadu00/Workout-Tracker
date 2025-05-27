@@ -1,6 +1,5 @@
 package com.WorkoutTracker.Trainer;
 
-import com.WorkoutTracker.User.Registration.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -15,6 +15,15 @@ public class TrainerDto {
     private Integer specialization;
     private String specialisationName;
     private String status;
+    private Integer rating;
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
 
     public Integer getTrainer_id() {
         return trainer_id;

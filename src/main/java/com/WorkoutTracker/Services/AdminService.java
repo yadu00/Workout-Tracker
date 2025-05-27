@@ -1,10 +1,10 @@
-package com.WorkoutTracker.Admin;
+package com.WorkoutTracker.Services;
 
+import com.WorkoutTracker.Admin.AdminModel;
+import com.WorkoutTracker.Admin.AdminRepo;
 import com.WorkoutTracker.Dto.AdminLoginDto;
 import com.WorkoutTracker.Dto.TrainerDto;
 import com.WorkoutTracker.Dto.UserDto;
-import com.WorkoutTracker.Exercises.ExerciseCategory.ExcerciseCategory;
-import com.WorkoutTracker.Exercises.ExerciseCategory.ExcerciseCategoryRepo;
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecializationRepo;
 import com.WorkoutTracker.Gender.GenderModel;
@@ -12,9 +12,9 @@ import com.WorkoutTracker.Gender.GenderRepo;
 import com.WorkoutTracker.SignUpStatus.StatusModel;
 import com.WorkoutTracker.SignUpStatus.StatusRepo;
 import com.WorkoutTracker.Trainer.TrainerModel;
-import com.WorkoutTracker.User.Registration.UserModel;
+import com.WorkoutTracker.User.UserModel;
 import com.WorkoutTracker.Trainer.TrainerRepo;
-import com.WorkoutTracker.User.Registration.UserRepo;
+import com.WorkoutTracker.User.UserRepo;
 import com.WorkoutTracker.WeekDays.WeekDaysRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,8 +42,6 @@ public class AdminService {
     @Autowired
     private GenderRepo genderRepo;
 
-    @Autowired
-    private ExcerciseCategoryRepo excerciseCategoryRepo;
 
     @Autowired
     private WeekDaysRepo weekDaysRepo;
@@ -140,20 +138,8 @@ public class AdminService {
     }
 
 
-    //add exercise categories
-    public ResponseEntity<?> addExcerciseCategory(ExcerciseCategory excerciseCategory) {
-        ExcerciseCategory excerciseCategory1=new ExcerciseCategory();
-        excerciseCategory1.setCategory_name(excerciseCategory.getCategory_name());
-        excerciseCategoryRepo.save(excerciseCategory1);
-        return new ResponseEntity<>(excerciseCategory1,HttpStatus.OK);
-    }
 
-//    public ResponseEntity<?> addWeekDays(WeekDaysModel weekDaysModel) {
-//        WeekDaysModel weekDaysModel1=new WeekDaysModel();
-//        weekDaysModel1.setDay(weekDaysModel.getDay());
-//        weekDaysRepo.save(weekDaysModel1);
-//        return new ResponseEntity<>(weekDaysModel1,HttpStatus.OK);
-//    }
+
 
 
     //add gender informations

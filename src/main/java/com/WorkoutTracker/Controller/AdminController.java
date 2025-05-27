@@ -1,9 +1,11 @@
-package com.WorkoutTracker.Admin;
+package com.WorkoutTracker.Controller;
 
+import com.WorkoutTracker.Admin.AdminModel;
+import com.WorkoutTracker.Services.AdminService;
 import com.WorkoutTracker.Dto.AdminLoginDto;
 import com.WorkoutTracker.Dto.TrainerDto;
 import com.WorkoutTracker.Dto.UserDto;
-import com.WorkoutTracker.Exercises.ExerciseCategory.ExcerciseCategory;
+
 import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
 import com.WorkoutTracker.Gender.GenderModel;
 import com.WorkoutTracker.SignUpStatus.StatusModel;
@@ -117,29 +119,6 @@ public class AdminController {
     }
 
 
-
-
-    //Add exercise Category
-    @PostMapping(path="/addExcerciseCategory")
-    public ResponseEntity<?> addExcerciseCategory(@RequestBody ExcerciseCategory excerciseCategory){
-        try {
-            return adminService.addExcerciseCategory(excerciseCategory);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-//    //add week days
-//    @PostMapping(path="/addWeekDays")
-//    public ResponseEntity<?> addWeekDays(@RequestBody WeekDaysModel weekDaysModel){
-//        try {
-//            return adminService.addWeekDays(weekDaysModel);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
     //Add Registration Status
     @PostMapping(path = "/AddRegStatus")
     public ResponseEntity<?> addStatus(@RequestBody StatusModel statusModel){
@@ -150,6 +129,8 @@ public class AdminController {
         }
         return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
     //Approve Registration
     @PutMapping(path = "/ApproveTrainer")
     public ResponseEntity<?> ApproveTrainer(@RequestParam Integer trainer_id,@RequestParam Integer statusId){
@@ -167,6 +148,8 @@ public class AdminController {
 
         return adminService.listrequests();
     }
+
+
     //view trainer details
     @GetMapping(path = "/TrainerDetails")
     public ResponseEntity<?> viewtrainer(@RequestParam Integer trainer_id) {

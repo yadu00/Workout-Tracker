@@ -1,4 +1,4 @@
-package com.WorkoutTracker.User.UserDetails;
+package com.WorkoutTracker.Reports;
 
 import jakarta.persistence.*;
 import lombok.Data;
