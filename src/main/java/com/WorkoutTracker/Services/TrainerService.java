@@ -1,24 +1,28 @@
 package com.WorkoutTracker.Services;
 
 import com.WorkoutTracker.Dto.*;
-import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsModel;
-import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsRepo;
-import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecializationRepo;
-import com.WorkoutTracker.Gender.GenderModel;
-import com.WorkoutTracker.Gender.GenderRepo;
-import com.WorkoutTracker.Trainer.TrainerModel;
-import com.WorkoutTracker.Trainer.TrainerRepo;
-import com.WorkoutTracker.User.UserModel;
-import com.WorkoutTracker.User.UserRepo;
-import com.WorkoutTracker.Reports.UserDetails;
-import com.WorkoutTracker.Reports.UserDetailsRepo;
-import com.WorkoutTracker.UserTrainer.UserTrainerModel;
-import com.WorkoutTracker.UserTrainer.UserTrainerRepo;
-import com.WorkoutTracker.WeekDays.WeekDaysModel;
-import com.WorkoutTracker.WeekDays.WeekDaysRepo;
-import com.WorkoutTracker.Workouts.WorkoutModel;
-import com.WorkoutTracker.Workouts.WorkoutRepo;
+import com.WorkoutTracker.Models.DailyWorkout.DailyWorkout;
+import com.WorkoutTracker.Models.DailyWorkout.DailyWorkoutRepo;
+import com.WorkoutTracker.Models.Exercises.ExerciseDetails.ExcerciseDetailsModel;
+import com.WorkoutTracker.Models.Exercises.ExerciseDetails.ExcerciseDetailsRepo;
+import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecializationRepo;
+import com.WorkoutTracker.Models.Gender.GenderModel;
+import com.WorkoutTracker.Models.Gender.GenderRepo;
+import com.WorkoutTracker.Models.Trainer.TrainerModel;
+import com.WorkoutTracker.Models.Trainer.TrainerRepo;
+import com.WorkoutTracker.Models.User.UserModel;
+import com.WorkoutTracker.Models.User.UserRepo;
+import com.WorkoutTracker.Models.Reports.UserDetails;
+import com.WorkoutTracker.Models.Reports.UserDetailsRepo;
+import com.WorkoutTracker.Models.UserTrainer.UserTrainerModel;
+import com.WorkoutTracker.Models.UserTrainer.UserTrainerRepo;
+import com.WorkoutTracker.Models.WeekDays.WeekDaysModel;
+import com.WorkoutTracker.Models.WeekDays.WeekDaysRepo;
+import com.WorkoutTracker.Models.Workouts.WorkoutModel;
+import com.WorkoutTracker.Models.Workouts.WorkoutRepo;
+import com.WorkoutTracker.Payment.PaymentModel;
+import com.WorkoutTracker.Payment.PaymentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +63,19 @@ public class TrainerService {
     @Autowired
     private UserDetailsRepo userDetailsRepo;
 
+    @Autowired
+    private DailyWorkoutRepo dailyWorkoutRepo;
 
+    @Autowired
+    private PaymentRepo paymentRepo;
+
+
+    private double calculateSalary(Integer experienceYears) {
+        if (experienceYears <= 2) return 1000;
+        else if (experienceYears <= 5) return 3000;
+        else if (experienceYears <= 9) return 5000;
+        else return 7000;
+    }
     //add trainer
     public ResponseEntity<?> addDetails(TrainerModel trainerModel, MultipartFile cert) throws IOException {
         TrainerModel trainerModel1 =new TrainerModel();
@@ -71,6 +87,10 @@ public class TrainerService {
         trainerModel1.setSpecialization_id(trainerModel.getSpecialization_id());
         trainerModel1.setCert(cert.getBytes());
         trainerModel1.setCreated_date(LocalDate.now());
+
+        double salary = calculateSalary(trainerModel.getExperienceYears());
+        trainerModel1.setSalary(salary);
+
         trainerRepo.save(trainerModel1);
         return new ResponseEntity<>(trainerModel1, HttpStatus.OK);
     }
@@ -139,6 +159,7 @@ public class TrainerService {
                     UserModel userModel = userModelOptional.get();
                     userDto.setName(userModel.getName());
                     userDto.setEmail(userModel.getEmail());
+                    userDto.setPaymentStatus(userModel.getPaymentStatus());
                     Optional<GenderModel> genderModelOptional = genderRepo.findById(userModel.getGender_id());
                     if (genderModelOptional.isPresent()) {
                         GenderModel genderModel = genderModelOptional.get();
@@ -198,20 +219,36 @@ public class TrainerService {
         workoutModel1.setUser_id(workoutModel.getUser_id());
         workoutModel1.setExercise_id(workoutModel.getExercise_id());
         workoutModel1.setTrainer_id(workoutModel.getTrainer_id());
-        workoutModel1.setWeekdayId(workoutModel.getWeekdayId());
+        workoutModel1.setId(workoutModel.getId());
         workoutModel1.setEquipments(workoutModel.getEquipments());
         workoutModel1.setCreated_date(LocalDate.now());
-        workoutModel1.setWorkoutdate(workoutModel.getWorkoutdate());
         workoutModel1.setDuration(workoutModel.getDuration());
         workoutModel1.setReps(workoutModel.getReps());
         workoutModel1.setSets(workoutModel.getSets());
         workoutModel1.setWeights(workoutModel.getWeights());
-        workoutModel1.setWorkoutdate(workoutModel.getWorkoutdate());
         workoutRepo.save(workoutModel1);
         return new ResponseEntity<>(workoutModel1, HttpStatus.OK);
     }
 
 
+
+    public ResponseEntity<?> dailylyworkout(@RequestBody DailyWorkout dailyWorkout) {
+        int count = dailyWorkoutRepo.countByUser_IdAndTrainer_Id(dailyWorkout.getUser_id(), dailyWorkout.getTrainer_id());
+
+        DailyWorkout dailyWorkout1 = new DailyWorkout();
+        dailyWorkout1.setTrainer_id(dailyWorkout.getTrainer_id());
+        dailyWorkout1.setUser_id(dailyWorkout.getUser_id());
+        dailyWorkout1.setDate(dailyWorkout.getDate());
+        dailyWorkout1.setWorkoutName(dailyWorkout.getWorkoutName());
+        String nextDay = "Day " + (count + 1);
+        dailyWorkout1.setDay(nextDay);
+        dailyWorkout1.setDay(nextDay);
+
+        dailyWorkoutRepo.save(dailyWorkout1);
+
+
+        return new ResponseEntity<>(dailyWorkout1, HttpStatus.OK);
+    }
 
     public ResponseEntity<?> addWeekdays(@RequestBody List<WeekDaysModel> weekDaysModels) {
         List<WeekDaysModel> savedWeekdays = new ArrayList<>();
@@ -251,6 +288,25 @@ public class TrainerService {
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
+
+
+    public ResponseEntity<?> daylyWorkouts(Integer userId) {
+        List<DailyWorkout> dailyWorkoutList = dailyWorkoutRepo.findByUser_Id(userId);
+        List<DailyWorkoutDto> dtoList = new ArrayList<>();
+
+        for (DailyWorkout dailyWorkout : dailyWorkoutList) {
+            DailyWorkoutDto dailyWorkoutDto = new DailyWorkoutDto();
+            dailyWorkoutDto.setUser_id(dailyWorkout.getUser_id());
+            dailyWorkoutDto.setTrainer_id(dailyWorkout.getTrainer_id());
+            dailyWorkoutDto.setDay(dailyWorkout.getDay());
+            dailyWorkoutDto.setWorkoutName(dailyWorkout.getWorkoutName());
+            dailyWorkoutDto.setDate(dailyWorkout.getDate());
+            dailyWorkoutDto.setId(dailyWorkout.getId());
+            dtoList.add(dailyWorkoutDto);
+        }
+
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
+    }
     //trainer update scheduled workouts of user
 
     public ResponseEntity<?> UpdateWorkouts(Integer workoutId, Integer trainerId, Integer userId, WorkoutUpdateDto workoutUpdateDto) {
@@ -302,6 +358,7 @@ public class TrainerService {
             trainerDto.setPassword(trainerModel.getPassword());
             trainerDto.setCertification(trainerModel.getCertification());
             trainerDto.setExperienceYears(trainerModel.getExperienceYears());
+            trainerDto.setSalary(trainerModel.getSalary());
 
             Optional<ExcerciseSpecialisationModel> excerciseSpecialisationModel = excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
             if (excerciseSpecialisationModel.isPresent()) {
@@ -349,8 +406,8 @@ public class TrainerService {
     }
 
 //view wokouts scheduled to users
-    public ResponseEntity<?> viewWorkout(Integer userId,Integer weekdayId) {
-        List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndWeekdayId(userId,weekdayId);
+    public ResponseEntity<?> viewWorkout(Integer userId,Integer Id) {
+        List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndId(userId,Id);
         List<WorkoutDto> dtos = new ArrayList<>();
         if (!workoutModelList.isEmpty()) {
             for (WorkoutModel workoutModel : workoutModelList) {
@@ -362,11 +419,21 @@ public class TrainerService {
                 workoutDto.setEquipments(workoutModel.getEquipments());
                 workoutDto.setWeights(workoutModel.getWeights());
                 workoutDto.setStatus(workoutModel.getStatus());
+                workoutDto.setSetsDone(workoutModel.getSetsDone());
+                workoutDto.setWorkoutStatus(workoutModel.getWorkoutStatus());
+                workoutDto.setRemarks(workoutModel.getRemarks());
+                workoutDto.setRepsDone(workoutModel.getRepsDone());
 
                 Optional<ExcerciseDetailsModel> excerciseDetailsModelOptional = excerciseDetailsRepo.findById(workoutModel.getExercise_id());
                 if (excerciseDetailsModelOptional.isPresent()) {
                     ExcerciseDetailsModel excerciseDetailsModel = excerciseDetailsModelOptional.get();
                     workoutDto.setExcercise_name(excerciseDetailsModel.getExercise_name());
+
+                }
+                Optional<DailyWorkout> dailyWorkoutOptional = dailyWorkoutRepo.findById(workoutModel.getId());
+                if (dailyWorkoutOptional.isPresent()) {
+                    DailyWorkout dailyWorkout = dailyWorkoutOptional.get();
+                    workoutDto.setDate(dailyWorkout.getDate());
 
                 }
                 dtos.add(workoutDto);
@@ -432,4 +499,50 @@ public class TrainerService {
         }
         return new ResponseEntity<>("No exercise found for this trainer",HttpStatus.NO_CONTENT);
     }
+
+
+//    public ResponseEntity<?> notScheduledToday(Integer trainerId, LocalDate date) {
+//        List<UserTrainerModel> userTrainerModelList=userTrainerRepo.findByTrainerId(trainerId);
+//
+//    }
+
+
+    public List<UserInfoDto> getUnscheduledUsers(Integer trainerId) {
+        return userRepo.findUsersWithoutWorkoutToday(trainerId, LocalDate.now());
+    }
+
+    public List<UserDto> getPaymentStatus(Integer trainer_id) {
+        List<UserDto> userDtos = new ArrayList<>();
+        List<UserTrainerModel> userTrainerModelList = userTrainerRepo.findByTrainer_Id(trainer_id);
+
+        if (!userTrainerModelList.isEmpty()) {
+            for (UserTrainerModel userTrainerModel : userTrainerModelList) {
+                UserDto userDto = new UserDto();
+                Optional<UserModel> userModelOptional = userRepo.findById(userTrainerModel.getUser_id());
+
+                if (userModelOptional.isPresent()) {
+                    UserModel userModel = userModelOptional.get();
+                    String status="SUCCESS";
+                    Optional<PaymentModel> paymentModelOptional=paymentRepo.findByUser_IdAndStatus(userTrainerModel.getUser_id(),status);
+                    if (paymentModelOptional.isPresent()){
+                        PaymentModel paymentModel=paymentModelOptional.get();
+                        userDto.setPaymentStatus(userModel.getPaymentStatus());
+                        userDto.setUser_id(userModel.getUser_id());
+                        userDto.setName(userModel.getName());
+                        userDto.setSubscriptionStart(paymentModel.getSubscriptionStart());
+                        userDto.setSubscriptionEnd(paymentModel.getSubscriptionEnd());
+                        userDtos.add(userDto);
+                    }
+
+
+                }
+
+
+
+            }
+        }
+
+        return userDtos;
+    }
+
 }

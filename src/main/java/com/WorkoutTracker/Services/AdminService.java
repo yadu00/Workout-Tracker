@@ -1,21 +1,21 @@
 package com.WorkoutTracker.Services;
 
-import com.WorkoutTracker.Admin.AdminModel;
-import com.WorkoutTracker.Admin.AdminRepo;
+import com.WorkoutTracker.Models.Admin.AdminModel;
+import com.WorkoutTracker.Models.Admin.AdminRepo;
 import com.WorkoutTracker.Dto.AdminLoginDto;
 import com.WorkoutTracker.Dto.TrainerDto;
 import com.WorkoutTracker.Dto.UserDto;
-import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecializationRepo;
-import com.WorkoutTracker.Gender.GenderModel;
-import com.WorkoutTracker.Gender.GenderRepo;
-import com.WorkoutTracker.SignUpStatus.StatusModel;
-import com.WorkoutTracker.SignUpStatus.StatusRepo;
-import com.WorkoutTracker.Trainer.TrainerModel;
-import com.WorkoutTracker.User.UserModel;
-import com.WorkoutTracker.Trainer.TrainerRepo;
-import com.WorkoutTracker.User.UserRepo;
-import com.WorkoutTracker.WeekDays.WeekDaysRepo;
+import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecializationRepo;
+import com.WorkoutTracker.Models.Gender.GenderModel;
+import com.WorkoutTracker.Models.Gender.GenderRepo;
+import com.WorkoutTracker.Models.SignUpStatus.StatusModel;
+import com.WorkoutTracker.Models.SignUpStatus.StatusRepo;
+import com.WorkoutTracker.Models.Trainer.TrainerModel;
+import com.WorkoutTracker.Models.User.UserModel;
+import com.WorkoutTracker.Models.Trainer.TrainerRepo;
+import com.WorkoutTracker.Models.User.UserRepo;
+import com.WorkoutTracker.Models.WeekDays.WeekDaysRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -247,6 +247,7 @@ public class AdminService {
             trainerDto.setPassword(trainerModel.getPassword());
             trainerDto.setCertification(trainerModel.getCertification());
             trainerDto.setExperienceYears(trainerModel.getExperienceYears());
+            trainerDto.setCert(trainerModel.getCert());
             Optional<ExcerciseSpecialisationModel> excerciseSpecialisationModel = excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
             if (excerciseSpecialisationModel.isPresent()) {
                 trainerDto.setSpecialisationName(excerciseSpecialisationModel.get().getSpecialization_name());
@@ -260,6 +261,25 @@ public class AdminService {
         }
     }
 
+    //list all approved trainers
+    public ResponseEntity<List<TrainerDto>> viewApprovedTrainers() {
+        List<TrainerDto> dto = new ArrayList<>();
+        List<TrainerModel> trainerModels = trainerRepo.findByStatusID(2);
+        if (!trainerModels.isEmpty()) {
+            for (TrainerModel trainerModel : trainerModels) {
+                TrainerDto trainerDto1 = new TrainerDto();
+                trainerDto1.setTrainer_id(trainerModel.getTrainer_id());
+                trainerDto1.setName(trainerModel.getName());
+                trainerDto1.setEmail(trainerModel.getEmail());
+                trainerDto1.setCertification(trainerModel.getCertification());
+                trainerDto1.setExperienceYears(trainerModel.getExperienceYears());
+                dto.add(trainerDto1);
+            }
+
+        }
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 }
 
 

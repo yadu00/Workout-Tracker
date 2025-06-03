@@ -3,6 +3,9 @@ package com.WorkoutTracker.Dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
     private Integer user_id;
@@ -13,6 +16,33 @@ public class UserDto {
     private double bmi;
     private double weight;
     private double height;
+    private Integer paymentStatus;
+    private LocalDateTime subscriptionStart;
+    private LocalDateTime subscriptionEnd;
+
+    public LocalDateTime getSubscriptionStart() {
+        return subscriptionStart;
+    }
+
+    public void setSubscriptionStart(LocalDateTime subscriptionStart) {
+        this.subscriptionStart = subscriptionStart;
+    }
+
+    public LocalDateTime getSubscriptionEnd() {
+        return subscriptionEnd;
+    }
+
+    public void setSubscriptionEnd(LocalDateTime subscriptionEnd) {
+        this.subscriptionEnd = subscriptionEnd;
+    }
+
+    public Integer getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(Integer paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
 
     public double getHeight() {
         return height;

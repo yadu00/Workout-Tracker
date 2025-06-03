@@ -1,20 +1,22 @@
 package com.WorkoutTracker.Controller;
 
-import com.WorkoutTracker.Dto.ExcerciseDto;
-import com.WorkoutTracker.Dto.LoginDto;
-import com.WorkoutTracker.Dto.WorkoutUpdateDto;
-import com.WorkoutTracker.Exercises.ExerciseDetails.ExcerciseDetailsModel;
-import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Trainer.TrainerModel;
+import com.WorkoutTracker.Dto.*;
+import com.WorkoutTracker.Models.DailyWorkout.DailyWorkout;
+import com.WorkoutTracker.Models.Exercises.ExerciseDetails.ExcerciseDetailsModel;
+import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Models.Trainer.TrainerModel;
+import com.WorkoutTracker.Models.User.UserModel;
 import com.WorkoutTracker.Services.TrainerService;
-import com.WorkoutTracker.WeekDays.WeekDaysModel;
-import com.WorkoutTracker.Workouts.WorkoutModel;
+import com.WorkoutTracker.Models.WeekDays.WeekDaysModel;
+import com.WorkoutTracker.Models.Workouts.WorkoutModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -128,6 +130,16 @@ public class TrainerController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //schedule weekly workouts
+    @PostMapping("/dailylyworkout")
+    public ResponseEntity<?> dailylyworkout(@RequestBody DailyWorkout dailyWorkout) {
+        try {
+            return trainerService.dailylyworkout(dailyWorkout);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     //view scheduled weekly workouts
     @GetMapping("/getweekday")
@@ -139,13 +151,23 @@ public class TrainerController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //view scheduled weekly workouts
+    @GetMapping("/getdaylyWorkouts")
+    public ResponseEntity<?> daylyWorkouts(@RequestParam Integer user_id) {
+        try {
+            return trainerService.daylyWorkouts(user_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
    //view scheduled exercises on days
     @GetMapping("/viewWorkout")
-    public ResponseEntity<?> viewWorkout(@RequestParam Integer user_id,@RequestParam Integer weekdayId) {
+    public ResponseEntity<?> viewWorkout(@RequestParam Integer user_id,@RequestParam Integer id) {
         try{
-            return trainerService.viewWorkout(user_id,weekdayId);
+            return trainerService.viewWorkout(user_id,id);
         }catch (Exception e){
             e.printStackTrace();
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -249,6 +271,28 @@ public class TrainerController {
             e.printStackTrace();
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+    //view clients whose workouts are not scheduled today
+//    @GetMapping("/not-scheduled-today")
+//    public ResponseEntity<?> notScheduledToday(@RequestParam Integer trainer_id, @RequestParam LocalDate date) {
+//        try {
+//            return trainerService.notScheduledToday(trainer_id,date);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+    @GetMapping("/unscheduled-users")
+    public ResponseEntity<List<UserInfoDto>> getUnscheduledUsers(@RequestParam Integer trainerId) {
+        return ResponseEntity.ok(trainerService.getUnscheduledUsers(trainerId));
+    }
+
+
+    @GetMapping("/payment/status")
+    public ResponseEntity<List<UserDto>> getPaymentStatus(@RequestParam Integer trainer_id) {
+        return ResponseEntity.ok(trainerService.getPaymentStatus(trainer_id));
     }
 
 

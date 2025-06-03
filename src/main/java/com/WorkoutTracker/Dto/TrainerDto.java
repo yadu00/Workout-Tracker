@@ -2,6 +2,7 @@ package com.WorkoutTracker.Dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TrainerDto {
@@ -16,6 +17,9 @@ public class TrainerDto {
     private String specialisationName;
     private String status;
     private Integer rating;
+    private double salary;
+    @Lob
+    private byte[] cert;
 
     public Integer getRating() {
         return rating;
@@ -95,5 +99,21 @@ public class TrainerDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public byte[] getCert() {
+        return cert;
+    }
+
+    public void setCert(byte[] cert) {
+        this.cert = cert;
     }
 }

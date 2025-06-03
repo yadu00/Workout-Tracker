@@ -17,7 +17,52 @@ public class WorkoutDto {
     private String duration;
     private Integer status;
     private LocalDate date;
+    private String focusarea;
 
+    private String workoutStatus;
+    private Integer repsDone;
+    private Integer setsDone;
+    private String remarks;
+
+    public String getFocusarea() {
+        return focusarea;
+    }
+
+    public void setFocusarea(String focusarea) {
+        this.focusarea = focusarea;
+    }
+
+    public String getWorkoutStatus() {
+        return workoutStatus;
+    }
+
+    public void setWorkoutStatus(String workoutStatus) {
+        this.workoutStatus = workoutStatus;
+    }
+
+    public Integer getRepsDone() {
+        return repsDone;
+    }
+
+    public void setRepsDone(Integer repsDone) {
+        this.repsDone = repsDone;
+    }
+
+    public Integer getSetsDone() {
+        return setsDone;
+    }
+
+    public void setSetsDone(Integer setsDone) {
+        this.setsDone = setsDone;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
     public String getExcercise_name() {
         return excercise_name;

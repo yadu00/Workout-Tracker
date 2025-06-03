@@ -1,14 +1,14 @@
 package com.WorkoutTracker.Controller;
 
-import com.WorkoutTracker.Admin.AdminModel;
+import com.WorkoutTracker.Models.Admin.AdminModel;
 import com.WorkoutTracker.Services.AdminService;
 import com.WorkoutTracker.Dto.AdminLoginDto;
 import com.WorkoutTracker.Dto.TrainerDto;
 import com.WorkoutTracker.Dto.UserDto;
 
-import com.WorkoutTracker.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Gender.GenderModel;
-import com.WorkoutTracker.SignUpStatus.StatusModel;
+import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Models.Gender.GenderModel;
+import com.WorkoutTracker.Models.SignUpStatus.StatusModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -157,5 +157,12 @@ public class AdminController {
         return adminService.viewtrainer(trainer_id);
     }
 
+
+    //list all trainers
+    @GetMapping(path = "/viewApprovedTrainers")
+    public ResponseEntity<List<TrainerDto>> viewApprovedTrainers() {
+
+        return adminService.viewApprovedTrainers();
+    }
 
 }
