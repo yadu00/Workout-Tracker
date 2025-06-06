@@ -1,22 +1,18 @@
 package com.WorkoutTracker.Controller;
 
 import com.WorkoutTracker.Dto.*;
-import com.WorkoutTracker.Models.DailyWorkout.DailyWorkout;
-import com.WorkoutTracker.Models.Exercises.ExerciseDetails.ExcerciseDetailsModel;
-import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Models.Trainer.TrainerModel;
-import com.WorkoutTracker.Models.User.UserModel;
-import com.WorkoutTracker.Services.TrainerService;
-import com.WorkoutTracker.Models.WeekDays.WeekDaysModel;
-import com.WorkoutTracker.Models.Workouts.WorkoutModel;
+import com.WorkoutTracker.Model.DailyWorkout.DailyWorkout;
+import com.WorkoutTracker.Model.Exercises.ExerciseDetails.ExcerciseDetailsModel;
+import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Model.Trainer.TrainerModel;
+import com.WorkoutTracker.Service.TrainerService;
+import com.WorkoutTracker.Model.Workouts.WorkoutModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -108,11 +104,11 @@ public class TrainerController {
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //schedule workouts
-    @PostMapping("/schedule-workouts")
-    public ResponseEntity<?> scheduleWorkouts(@RequestBody WorkoutModel workoutModel) {
+    //create workouts
+    @PostMapping("/create-workout")
+    public ResponseEntity<?> createWorkouts(@RequestBody WorkoutModel workoutModel) {
         try {
-            return trainerService.scheduleWorkouts(workoutModel);
+            return trainerService.createWorkouts(workoutModel);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -121,38 +117,19 @@ public class TrainerController {
 
 
     //schedule weekly workouts
-    @PostMapping("/addweeklyworkout")
-    public ResponseEntity<?> addweekdays(@RequestBody List<WeekDaysModel> weekDaysModel) {
+    @PostMapping("/schedule-weekly-workout")
+    public ResponseEntity<?> weeklyworkout(@RequestBody DailyWorkout dailyWorkout) {
         try {
-            return trainerService.addWeekdays(weekDaysModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    //schedule weekly workouts
-    @PostMapping("/dailylyworkout")
-    public ResponseEntity<?> dailylyworkout(@RequestBody DailyWorkout dailyWorkout) {
-        try {
-            return trainerService.dailylyworkout(dailyWorkout);
+            return trainerService.weeklyworkout(dailyWorkout);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+
     //view scheduled weekly workouts
-    @GetMapping("/getweekday")
-    public ResponseEntity<?> getWeekDay(@RequestParam Integer user_id) {
-        try {
-            return trainerService.getWeekDay(user_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    //view scheduled weekly workouts
-    @GetMapping("/getdaylyWorkouts")
+    @GetMapping("/getWeeklyWorkouts")
     public ResponseEntity<?> daylyWorkouts(@RequestParam Integer user_id) {
         try {
             return trainerService.daylyWorkouts(user_id);
@@ -163,7 +140,7 @@ public class TrainerController {
     }
 
 
-   //view scheduled exercises on days
+   //view scheduled exercises on each day
     @GetMapping("/viewWorkout")
     public ResponseEntity<?> viewWorkout(@RequestParam Integer user_id,@RequestParam Integer id) {
         try{
@@ -175,16 +152,6 @@ public class TrainerController {
 
 
 
-    //trainer update scheduled workouts of user
-    @PutMapping("/update-scheduled-workouts")
-    public ResponseEntity<?> UpdateWorkouts(@RequestParam Integer workout_id, @RequestParam Integer trainer_id, @RequestParam Integer user_id, @RequestBody WorkoutUpdateDto workoutUpdateDto) {
-        try {
-            return trainerService.UpdateWorkouts(workout_id,trainer_id,user_id,workoutUpdateDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     //Delete workout scheduled by trainer
     @DeleteMapping("/DeleteWorkouts")
@@ -273,23 +240,14 @@ public class TrainerController {
         }
     }
 
-
-    //view clients whose workouts are not scheduled today
-//    @GetMapping("/not-scheduled-today")
-//    public ResponseEntity<?> notScheduledToday(@RequestParam Integer trainer_id, @RequestParam LocalDate date) {
-//        try {
-//            return trainerService.notScheduledToday(trainer_id,date);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    //view unscheduled clients
     @GetMapping("/unscheduled-users")
     public ResponseEntity<List<UserInfoDto>> getUnscheduledUsers(@RequestParam Integer trainerId) {
         return ResponseEntity.ok(trainerService.getUnscheduledUsers(trainerId));
     }
 
 
+    //view clients payment status
     @GetMapping("/payment/status")
     public ResponseEntity<List<UserDto>> getPaymentStatus(@RequestParam Integer trainer_id) {
         return ResponseEntity.ok(trainerService.getPaymentStatus(trainer_id));

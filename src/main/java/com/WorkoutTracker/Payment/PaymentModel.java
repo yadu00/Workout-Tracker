@@ -26,8 +26,6 @@ public class PaymentModel {
     @Column(name = "payment_date")
     private LocalDateTime payment_date;
 
-    @Column(name = "chart_id")
-    private Integer chart_id;
 
 
     @Column(name = "subscription_start")
@@ -47,8 +45,6 @@ public class PaymentModel {
 
     @Column(name = "razorpay_signature")
     private String razorpay_signature;
-
-
 
 
     @Column(name = "status")
@@ -95,13 +91,7 @@ public class PaymentModel {
         this.payment_date = payment_date;
     }
 
-    public Integer getChart_id() {
-        return chart_id;
-    }
 
-    public void setChart_id(Integer chart_id) {
-        this.chart_id = chart_id;
-    }
 
     public String getRazorpayOrderId() {
         return razorpayOrderId;

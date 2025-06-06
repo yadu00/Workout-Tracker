@@ -1,10 +1,10 @@
 package com.WorkoutTracker.Controller;
 
 import com.WorkoutTracker.Dto.*;
-import com.WorkoutTracker.Models.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Models.User.UserModel;
-import com.WorkoutTracker.Services.UserService;
-import com.WorkoutTracker.Models.Bmi.BmiModel;
+import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Model.User.UserModel;
+import com.WorkoutTracker.Service.UserService;
+import com.WorkoutTracker.Model.Bmi.BmiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -108,7 +108,7 @@ public class UserController {
 
 
     //assign trainer
-    @PostMapping(path = "/assign")
+    @PostMapping(path = "/assignTrainer")
     public ResponseEntity<?> assignTrainer(@RequestBody Map<String, Integer> requestBody) {
         try {
             Integer userId = requestBody.get("user_id");
@@ -128,62 +128,6 @@ public class UserController {
 
 
 
-    //user update payment details
-    @PostMapping(path = "/updateRegPayment")
-    public ResponseEntity<?> updateRegPayment(@RequestParam Integer user_id,Boolean paymentStatus){
-        try {
-            return userService.updatePayment(user_id,paymentStatus);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-
-    //add Bmi details
-    @PostMapping(path="/addBmi")
-    public ResponseEntity<?> addBmi(@RequestParam double height,@RequestParam double weight,@RequestParam Integer user_id ){
-        try {
-            return userService.addBmi(height,weight,user_id);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-
-    //Update bmi details
-    @PutMapping(path = "/updateBmi")
-    public ResponseEntity<?> updateBmi(@RequestParam Integer user_id,@RequestParam double height,@RequestParam double weight) {
-        try {
-            return userService.updateBmi(user_id, height, weight);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-
-    }
-
-    //view Bmi
-    @GetMapping("/viewBmi")
-    public ResponseEntity<?> viewBmi(@RequestParam Integer user_id) {
-        try {
-            return userService.viewBmi(user_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-
-    }
-
-
-    //user view trainer excercises
-    @GetMapping(path = "/viewTrainer-excercises")
-    public ResponseEntity<List<ExcerciseDto>> viewExcercises(@RequestParam Integer trainer_id){
-        return userService.viewExcercises(trainer_id);
-    }
-
-
 
     //update password
     @PutMapping(path = "/updateUserPassword")
@@ -196,8 +140,8 @@ public class UserController {
     }
 
 
-    //view scheduled exercise on days
-    @GetMapping("/viewWorkouts")
+    //view daily scheduled workout
+    @GetMapping("/viewDailyWorkouts")
     public ResponseEntity<?> viewWorkouts(@RequestParam Integer user_id,@RequestParam Integer id) {
         try{
             return userService.viewWorkouts(user_id,id);
@@ -206,19 +150,10 @@ public class UserController {
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //view weekly workouts
-    @GetMapping("/weeklyworkout")
-    public ResponseEntity<?> getWeekDays(@RequestParam Integer user_id) {
-        try {
-            return userService.getWeekDays(user_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
-    //view scheduled weekly workouts
-    @GetMapping("/getdaylyWorkouts")
+
+    //view weekly scheduled workouts
+    @GetMapping("/getWeeklyWorkouts")
     public ResponseEntity<?> daylyWorkouts(@RequestParam Integer user_id) {
         try {
             return userService.daylyWorkouts(user_id);
@@ -227,8 +162,10 @@ public class UserController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    //view scheduled weekly workouts
-    @GetMapping("/gettodaysWorkout")
+
+
+    //view today's weekly scheduled  workout
+    @GetMapping("/todayWeeklyWorkout")
     public ResponseEntity<?> gettodaysWorkout(@RequestParam Integer user_id,@RequestParam LocalDate date) {
         try {
             return userService.gettodaysWorkout(user_id,date);
@@ -252,18 +189,8 @@ public class UserController {
     }
 
 
-    //update status of workouts
-    @PutMapping("/UpdateWorkoutStatus")
-    public ResponseEntity<?> UpdateWorkoutStatus(@RequestParam Integer user_id,@RequestParam Integer workout_id) {
-        try {
-            return userService.UpdateWorkoutStatus(user_id,workout_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
-    //log status of workouts
+    //Update status of workouts
     @PutMapping("/logWorkoutStatus")
     public ResponseEntity<?> logWorkoutStatus(@RequestParam Integer workout_id, @RequestBody WorkoutUpdateDto workoutUpdateDto) {
         try {
@@ -297,17 +224,17 @@ public class UserController {
     }
 
     //view todays workout
-    @GetMapping("/viewtodaysworkouts")
-    public ResponseEntity<?> viewtodaysworkouts(@RequestParam Integer user_id,@RequestParam LocalDate date) {
+    @GetMapping("/viewTodaysExercise")
+    public ResponseEntity<?> viewTodaysExercise(@RequestParam Integer user_id,@RequestParam LocalDate date) {
         try{
-            return userService.viewtodaysworkouts(user_id,date);
+            return userService.viewTodaysExercise(user_id,date);
         }catch (Exception e){
             e.printStackTrace();
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
-    //log weight details
+    //log Bmi
     @PostMapping(path="/logBmi")
     public ResponseEntity<?> logBmi(@RequestBody BmiModel bmiModel, @RequestParam Integer user_id){
         try {
@@ -319,7 +246,7 @@ public class UserController {
     }
 
 
-    //weight history
+    //Bmi history
     @GetMapping("/BmiHistory")
     public ResponseEntity<?> BmiHistory(@RequestParam Integer user_id) {
         try {
@@ -354,11 +281,22 @@ public class UserController {
     }
 
 
-    //show trainer rating
+    //view current monthly plan
     @GetMapping("/viewPaymentPlan")
     public ResponseEntity<?> viewPaymentPlan(@RequestParam Integer user_id) {
         try {
             return userService.viewPaymentPlan(user_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //get payment details
+    @GetMapping("/payment/details")
+    public ResponseEntity<?> getPaymentDetails(@RequestParam Integer user_id) {
+        try {
+            return userService.getPaymentDetails(user_id);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -378,7 +316,7 @@ public class UserController {
     }
 
 
-    //get subscription details
+    //get latest bmi
     @GetMapping("/latestBmi")
     public ResponseEntity<?> getLatestBmi(@RequestParam Integer user_id) {
         try {

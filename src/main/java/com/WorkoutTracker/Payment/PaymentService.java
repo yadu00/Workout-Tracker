@@ -1,7 +1,7 @@
 package com.WorkoutTracker.Payment;
 
-import com.WorkoutTracker.Models.User.UserModel;
-import com.WorkoutTracker.Models.User.UserRepo;
+import com.WorkoutTracker.Model.User.UserModel;
+import com.WorkoutTracker.Model.User.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +47,6 @@ public class PaymentService {
         PaymentModel payment = new PaymentModel();
         payment.setUser_id(request.getUser_id());
         payment.setTrainer_id(request.getTrainer_id());
-        payment.setChart_id(request.getChartId());
         payment.setAmount(request.getAmount());
         payment.setPayment_date(LocalDateTime.now());
         payment.setRazorpayOrderId(order.get("id"));
