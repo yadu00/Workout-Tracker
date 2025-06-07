@@ -1,4 +1,4 @@
-package com.WorkoutTracker.Model.DailyWorkout;
+package com.WorkoutTracker.Model.WorkoutDay;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,9 +6,9 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "dailyworkouts")
+@Table(name = "Workout_Day_Table")
 @Data
-public class DailyWorkout {
+public class WorkoutDayModal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

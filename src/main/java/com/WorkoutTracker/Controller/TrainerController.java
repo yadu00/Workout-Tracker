@@ -1,9 +1,9 @@
 package com.WorkoutTracker.Controller;
 
 import com.WorkoutTracker.Dto.*;
-import com.WorkoutTracker.Model.DailyWorkout.DailyWorkout;
-import com.WorkoutTracker.Model.Exercises.ExerciseDetails.ExcerciseDetailsModel;
-import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Model.WorkoutDay.WorkoutDayModal;
+import com.WorkoutTracker.Model.ExerciseDetails.ExcerciseDetailsModel;
+import com.WorkoutTracker.Model.ExerciseSpecialization.ExcerciseSpecializationModel;
 import com.WorkoutTracker.Model.Trainer.TrainerModel;
 import com.WorkoutTracker.Service.TrainerService;
 import com.WorkoutTracker.Model.Workouts.WorkoutModel;
@@ -27,9 +27,9 @@ public class TrainerController {
 
     //add trainer
     @PostMapping(path="/add-trainer")
-    public ResponseEntity<?> addDetails(@RequestPart TrainerModel trainerModel, @RequestPart MultipartFile cert){
+    public ResponseEntity<?> addDetails(@RequestPart TrainerModel trainerModel, @RequestPart MultipartFile certificationImage){
         try {
-            return trainerService.addDetails(trainerModel,cert);
+            return trainerService.addDetails(trainerModel,certificationImage);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -118,9 +118,9 @@ public class TrainerController {
 
     //schedule weekly workouts
     @PostMapping("/schedule-weekly-workout")
-    public ResponseEntity<?> weeklyworkout(@RequestBody DailyWorkout dailyWorkout) {
+    public ResponseEntity<?> weeklyworkout(@RequestBody WorkoutDayModal workoutDayModal) {
         try {
-            return trainerService.weeklyworkout(dailyWorkout);
+            return trainerService.weeklyworkout(workoutDayModal);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -201,7 +201,7 @@ public class TrainerController {
 
     //view specialization
     @GetMapping(path = "/viewSpecialization")
-    public ResponseEntity<List<ExcerciseSpecialisationModel>> viewSpecialisation() {
+    public ResponseEntity<List<ExcerciseSpecializationModel>> viewSpecialisation() {
 
         return trainerService.viewSpecialisation();
 

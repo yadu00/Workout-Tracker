@@ -7,11 +7,36 @@ import java.time.LocalDateTime;
 public class PaymentDetailsDto {
     private double amount;
     private LocalDateTime payment_date;
-
     private LocalDateTime subscriptionStart;
-
     private LocalDateTime subscriptionEnd;
     private String status;
+    private String razorpay_payment_id;
+    private String trainer;
+    private String user;
+
+    public String getRazorpay_payment_id() {
+        return razorpay_payment_id;
+    }
+
+    public void setRazorpay_payment_id(String razorpay_payment_id) {
+        this.razorpay_payment_id = razorpay_payment_id;
+    }
+
+    public String getTrainer() {
+        return trainer;
+    }
+
+    public void setTrainer(String trainer) {
+        this.trainer = trainer;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
 
     public double getAmount() {
         return amount;

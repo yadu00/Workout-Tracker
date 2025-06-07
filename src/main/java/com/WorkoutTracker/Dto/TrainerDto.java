@@ -18,8 +18,18 @@ public class TrainerDto {
     private String status;
     private Integer rating;
     private double salary;
+    private String mobile;
     @Lob
-    private byte[] cert;
+    private byte[] certificationImage;
+
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public Integer getRating() {
         return rating;
@@ -109,11 +119,11 @@ public class TrainerDto {
         this.salary = salary;
     }
 
-    public byte[] getCert() {
-        return cert;
+    public byte[] getCertificationImage() {
+        return certificationImage;
     }
 
-    public void setCert(byte[] cert) {
-        this.cert = cert;
+    public void setCertificationImage(byte[] certificationImage) {
+        this.certificationImage = certificationImage;
     }
 }

@@ -1,4 +1,4 @@
-package com.WorkoutTracker.Model.Exercises.ExerciseDetails;
+package com.WorkoutTracker.Model.ExerciseDetails;
 
 import jakarta.persistence.*;
 import lombok.Data;

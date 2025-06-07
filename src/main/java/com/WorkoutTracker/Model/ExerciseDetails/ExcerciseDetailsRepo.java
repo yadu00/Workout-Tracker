@@ -1,4 +1,4 @@
-package com.WorkoutTracker.Model.Exercises.ExerciseDetails;
+package com.WorkoutTracker.Model.ExerciseDetails;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;

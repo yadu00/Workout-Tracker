@@ -24,7 +24,7 @@ public interface UserRepo extends JpaRepository<UserModel,Integer> {
     WHERE ut.trainer_id = :trainerId
       AND u.user_id NOT IN (
           SELECT dw.user_id
-          FROM DailyWorkout dw
+          FROM WorkoutDayModal dw
           WHERE dw.date = :today
             AND dw.trainer_id = :trainerId
       )

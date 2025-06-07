@@ -1,12 +1,13 @@
 package com.WorkoutTracker.Controller;
 
+import com.WorkoutTracker.Dto.PaymentDetailsDto;
 import com.WorkoutTracker.Model.Admin.AdminModel;
 import com.WorkoutTracker.Service.AdminService;
 import com.WorkoutTracker.Dto.AdminLoginDto;
 import com.WorkoutTracker.Dto.TrainerDto;
 import com.WorkoutTracker.Dto.UserDto;
 
-import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Model.ExerciseSpecialization.ExcerciseSpecializationModel;
 import com.WorkoutTracker.Model.Gender.GenderModel;
 import com.WorkoutTracker.Model.TrainerAccountStatus.StatusModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,9 +84,9 @@ public class AdminController {
 
     //add exercise Specializations
     @PostMapping(path="/addSpecialization")
-    public ResponseEntity<?> addSpecialization(@RequestBody ExcerciseSpecialisationModel excerciseSpecialisationModel){
+    public ResponseEntity<?> addSpecialization(@RequestBody ExcerciseSpecializationModel excerciseSpecializationModel){
         try {
-            return adminService.addSpecialization(excerciseSpecialisationModel);
+            return adminService.addSpecialization(excerciseSpecializationModel);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -94,7 +95,7 @@ public class AdminController {
 
     //list specializations
     @GetMapping(path = "/viewspecialisations")
-    public ResponseEntity<List<ExcerciseSpecialisationModel>> specialisations() {
+    public ResponseEntity<List<ExcerciseSpecializationModel>> specialisations() {
 
         return adminService.specialisations();
     }
@@ -163,6 +164,13 @@ public class AdminController {
     public ResponseEntity<List<TrainerDto>> viewApprovedTrainers() {
 
         return adminService.viewApprovedTrainers();
+    }
+
+    //view payment details
+    @GetMapping(path = "/viewPaymentDetails")
+    public ResponseEntity<List<PaymentDetailsDto>> viewPaymentDetails() {
+
+        return adminService.viewPaymentDetails();
     }
 
 }

@@ -1,15 +1,13 @@
 package com.WorkoutTracker.Service;
 
 import com.WorkoutTracker.Dto.*;
-import com.WorkoutTracker.Model.Bmi.BmiModel;
 import com.WorkoutTracker.Model.Bmi.BmiRepo;
-import com.WorkoutTracker.Model.DailyWorkout.DailyWorkout;
-import com.WorkoutTracker.Model.DailyWorkout.DailyWorkoutRepo;
-import com.WorkoutTracker.Model.Exercises.ExerciseDetails.ExcerciseDetailsModel;
-import com.WorkoutTracker.Model.Exercises.ExerciseDetails.ExcerciseDetailsRepo;
-import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecializationRepo;
-import com.WorkoutTracker.Model.Gender.GenderModel;
+import com.WorkoutTracker.Model.WorkoutDay.WorkoutDayModal;
+import com.WorkoutTracker.Model.WorkoutDay.WorkoutDayRepo;
+import com.WorkoutTracker.Model.ExerciseDetails.ExcerciseDetailsModel;
+import com.WorkoutTracker.Model.ExerciseDetails.ExcerciseDetailsRepo;
+import com.WorkoutTracker.Model.ExerciseSpecialization.ExcerciseSpecializationModel;
+import com.WorkoutTracker.Model.ExerciseSpecialization.ExcerciseSpecializationRepo;
 import com.WorkoutTracker.Model.Gender.GenderRepo;
 import com.WorkoutTracker.Model.Trainer.TrainerModel;
 import com.WorkoutTracker.Model.Trainer.TrainerRepo;
@@ -60,7 +58,7 @@ public class TrainerService {
 
 
     @Autowired
-    private DailyWorkoutRepo dailyWorkoutRepo;
+    private WorkoutDayRepo workoutDayRepo;
 
     @Autowired
     private PaymentRepo paymentRepo;
@@ -75,7 +73,7 @@ public class TrainerService {
         else return 7000;
     }
     //add trainer
-    public ResponseEntity<?> addDetails(TrainerModel trainerModel, MultipartFile cert) throws IOException {
+    public ResponseEntity<?> addDetails(TrainerModel trainerModel, MultipartFile certificationImage) throws IOException {
         TrainerModel trainerModel1 =new TrainerModel();
         trainerModel1.setName(trainerModel.getName());
         trainerModel1.setEmail(trainerModel.getEmail());
@@ -83,7 +81,7 @@ public class TrainerService {
         trainerModel1.setCertification(trainerModel.getCertification());
         trainerModel1.setExperienceYears(trainerModel.getExperienceYears());
         trainerModel1.setSpecialization_id(trainerModel.getSpecialization_id());
-        trainerModel1.setCert(cert.getBytes());
+        trainerModel1.setCertificationImage(certificationImage.getBytes());
         trainerModel1.setCreated_date(LocalDate.now());
         trainerModel1.setMobile(trainerModel.getMobile());
         double salary = calculateSalary(trainerModel.getExperienceYears());
@@ -144,38 +142,43 @@ public class TrainerService {
     //trainer view clients
     public ResponseEntity<?> getAssignedUsers(Integer trainer_id) {
         List<UserDto> userDtoList = new ArrayList<>();
-        List<UserTrainerModel>userTrainerModels=userTrainerRepo.findByTrainerId(trainer_id);
+        List<UserTrainerModel> userTrainerModels = userTrainerRepo.findByTrainerId(trainer_id);
+
         if (!userTrainerModels.isEmpty()) {
             for (UserTrainerModel userTrainerModel : userTrainerModels) {
-                UserDto userDto=new UserDto();
-                userDto.setUser_id(userTrainerModel.getUser_id());
-                Optional<UserModel> userModelOptional=userRepo.findById(userTrainerModel.getUser_id());
+                Optional<UserModel> userModelOptional = userRepo.findById(userTrainerModel.getUser_id());
+
                 if (userModelOptional.isPresent()) {
                     UserModel userModel = userModelOptional.get();
+                    if (userModel.getName() == null) {
+                        continue;
+                    }
+
+                    UserDto userDto = new UserDto();
+                    userDto.setUser_id(userModel.getUser_id());
                     userDto.setName(userModel.getName());
                     userDto.setEmail(userModel.getEmail());
                     userDto.setPaymentStatus(userModel.getPaymentStatus());
-                    Optional<GenderModel> genderModelOptional = genderRepo.findById(userModel.getGender_id());
-                    if (genderModelOptional.isPresent()) {
-                        GenderModel genderModel = genderModelOptional.get();
+
+                    genderRepo.findById(userModel.getGender_id()).ifPresent(genderModel -> {
                         userDto.setGender_name(genderModel.getGenderName());
-                    }
-                    Optional<BmiModel> bmiModelOptional = bmiRepo.findLatestBmiByUserId(userModel.getUser_id());
-                    if (bmiModelOptional.isPresent()) {
-                        BmiModel bmiModel = bmiModelOptional.get();
+                    });
+
+                    bmiRepo.findLatestBmiByUserId(userModel.getUser_id()).ifPresent(bmiModel -> {
                         userDto.setWeight(bmiModel.getWeight());
                         userDto.setBmi(bmiModel.getBmi());
-                    }
+                    });
 
+                    userDtoList.add(userDto);
                 }
-                userDtoList.add(userDto);
             }
+
             return new ResponseEntity<>(userDtoList, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(userDtoList, HttpStatus.NOT_FOUND);
         }
-
     }
+
 
 
 
@@ -227,39 +230,39 @@ public class TrainerService {
 
 
 
-    public ResponseEntity<?> weeklyworkout(@RequestBody DailyWorkout dailyWorkout) {
-        int count = dailyWorkoutRepo.countByUser_IdAndTrainer_Id(dailyWorkout.getUser_id(), dailyWorkout.getTrainer_id());
+    public ResponseEntity<?> weeklyworkout(@RequestBody WorkoutDayModal workoutDayModal) {
+        int count = workoutDayRepo.countByUser_IdAndTrainer_Id(workoutDayModal.getUser_id(), workoutDayModal.getTrainer_id());
 
-        DailyWorkout dailyWorkout1 = new DailyWorkout();
-        dailyWorkout1.setTrainer_id(dailyWorkout.getTrainer_id());
-        dailyWorkout1.setUser_id(dailyWorkout.getUser_id());
-        dailyWorkout1.setDate(dailyWorkout.getDate());
-        dailyWorkout1.setWorkoutName(dailyWorkout.getWorkoutName());
+        WorkoutDayModal workoutDayModal1 = new WorkoutDayModal();
+        workoutDayModal1.setTrainer_id(workoutDayModal.getTrainer_id());
+        workoutDayModal1.setUser_id(workoutDayModal.getUser_id());
+        workoutDayModal1.setDate(workoutDayModal.getDate());
+        workoutDayModal1.setWorkoutName(workoutDayModal.getWorkoutName());
         String nextDay = "Day " + (count + 1);
-        dailyWorkout1.setDay(nextDay);
-        dailyWorkout1.setDay(nextDay);
+        workoutDayModal1.setDay(nextDay);
+        workoutDayModal1.setDay(nextDay);
 
-        dailyWorkoutRepo.save(dailyWorkout1);
+        workoutDayRepo.save(workoutDayModal1);
 
 
-        return new ResponseEntity<>(dailyWorkout1, HttpStatus.OK);
+        return new ResponseEntity<>(workoutDayModal1, HttpStatus.OK);
     }
 
 
 
 
     public ResponseEntity<?> daylyWorkouts(Integer userId) {
-        List<DailyWorkout> dailyWorkoutList = dailyWorkoutRepo.findByUser_Id(userId);
+        List<WorkoutDayModal> workoutDayModalList = workoutDayRepo.findByUser_Id(userId);
         List<DailyWorkoutDto> dtoList = new ArrayList<>();
 
-        for (DailyWorkout dailyWorkout : dailyWorkoutList) {
+        for (WorkoutDayModal workoutDayModal : workoutDayModalList) {
             DailyWorkoutDto dailyWorkoutDto = new DailyWorkoutDto();
-            dailyWorkoutDto.setUser_id(dailyWorkout.getUser_id());
-            dailyWorkoutDto.setTrainer_id(dailyWorkout.getTrainer_id());
-            dailyWorkoutDto.setDay(dailyWorkout.getDay());
-            dailyWorkoutDto.setWorkoutName(dailyWorkout.getWorkoutName());
-            dailyWorkoutDto.setDate(dailyWorkout.getDate());
-            dailyWorkoutDto.setId(dailyWorkout.getId());
+            dailyWorkoutDto.setUser_id(workoutDayModal.getUser_id());
+            dailyWorkoutDto.setTrainer_id(workoutDayModal.getTrainer_id());
+            dailyWorkoutDto.setDay(workoutDayModal.getDay());
+            dailyWorkoutDto.setWorkoutName(workoutDayModal.getWorkoutName());
+            dailyWorkoutDto.setDate(workoutDayModal.getDate());
+            dailyWorkoutDto.setId(workoutDayModal.getId());
             dtoList.add(dailyWorkoutDto);
         }
 
@@ -300,7 +303,7 @@ public class TrainerService {
             trainerDto.setExperienceYears(trainerModel.getExperienceYears());
             trainerDto.setSalary(trainerModel.getSalary());
 
-            Optional<ExcerciseSpecialisationModel> excerciseSpecialisationModel = excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
+            Optional<ExcerciseSpecializationModel> excerciseSpecialisationModel = excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
             if (excerciseSpecialisationModel.isPresent()) {
                 trainerDto.setSpecialisationName(excerciseSpecialisationModel.get().getSpecialization_name());
             } else {
@@ -370,10 +373,10 @@ public class TrainerService {
                     workoutDto.setExcercise_name(excerciseDetailsModel.getExercise_name());
 
                 }
-                Optional<DailyWorkout> dailyWorkoutOptional = dailyWorkoutRepo.findById(workoutModel.getId());
+                Optional<WorkoutDayModal> dailyWorkoutOptional = workoutDayRepo.findById(workoutModel.getId());
                 if (dailyWorkoutOptional.isPresent()) {
-                    DailyWorkout dailyWorkout = dailyWorkoutOptional.get();
-                    workoutDto.setDate(dailyWorkout.getDate());
+                    WorkoutDayModal workoutDayModal = dailyWorkoutOptional.get();
+                    workoutDto.setDate(workoutDayModal.getDate());
 
                 }
                 dtos.add(workoutDto);
@@ -385,16 +388,16 @@ public class TrainerService {
     }
 
 
-    public ResponseEntity<List<ExcerciseSpecialisationModel>> viewSpecialisation() {
-        List<ExcerciseSpecialisationModel> dto = new ArrayList<>();
-        List<ExcerciseSpecialisationModel> excerciseSpecialisationModels = excerciseSpecializationRepo.findAll();
-        if (!excerciseSpecialisationModels.isEmpty()) {
-            for (ExcerciseSpecialisationModel excerciseSpecialisationModel : excerciseSpecialisationModels) {
-                ExcerciseSpecialisationModel excerciseSpecialisationModel1 = new ExcerciseSpecialisationModel();
-                excerciseSpecialisationModel1.setSpecialization_id(excerciseSpecialisationModel.getSpecialization_id());
-                excerciseSpecialisationModel1.setSpecialization_name(excerciseSpecialisationModel.getSpecialization_name());
+    public ResponseEntity<List<ExcerciseSpecializationModel>> viewSpecialisation() {
+        List<ExcerciseSpecializationModel> dto = new ArrayList<>();
+        List<ExcerciseSpecializationModel> excerciseSpecializationModels = excerciseSpecializationRepo.findAll();
+        if (!excerciseSpecializationModels.isEmpty()) {
+            for (ExcerciseSpecializationModel excerciseSpecializationModel : excerciseSpecializationModels) {
+                ExcerciseSpecializationModel excerciseSpecializationModel1 = new ExcerciseSpecializationModel();
+                excerciseSpecializationModel1.setSpecialization_id(excerciseSpecializationModel.getSpecialization_id());
+                excerciseSpecializationModel1.setSpecialization_name(excerciseSpecializationModel.getSpecialization_name());
 
-                dto.add(excerciseSpecialisationModel);
+                dto.add(excerciseSpecializationModel);
             }
 
         }

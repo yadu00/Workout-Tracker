@@ -1,7 +1,7 @@
 package com.WorkoutTracker.Controller;
 
 import com.WorkoutTracker.Dto.*;
-import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecialisationModel;
+import com.WorkoutTracker.Model.ExerciseSpecialization.ExcerciseSpecializationModel;
 import com.WorkoutTracker.Model.User.UserModel;
 import com.WorkoutTracker.Service.UserService;
 import com.WorkoutTracker.Model.Bmi.BmiModel;
@@ -85,7 +85,7 @@ public class UserController {
 
     //view specializations
     @GetMapping(path = "/viewSpecializations")
-    public ResponseEntity<List<ExcerciseSpecialisationModel>> listSpecialization() {
+    public ResponseEntity<List<ExcerciseSpecializationModel>> listSpecialization() {
         return userService.getAllSpecialization();
     }
 
@@ -182,6 +182,18 @@ public class UserController {
     public ResponseEntity<?> ViewAssignedTrainer(@RequestParam Integer user_id) {
         try {
             return userService.ViewAssignedTrainer(user_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    //view trainer from trainers
+    @GetMapping("/ViewTrainer")
+    public ResponseEntity<?> ViewTrainer(@RequestParam Integer trainer_id) {
+        try {
+            return userService.ViewTrainer(trainer_id);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);

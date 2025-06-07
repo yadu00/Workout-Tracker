@@ -1,12 +1,12 @@
-package com.WorkoutTracker.Model.Exercises.Specialization;
+package com.WorkoutTracker.Model.ExerciseSpecialization;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "exercise_specialisation")
+@Table(name = "exercise_specialization")
 @Data
-public class ExcerciseSpecialisationModel {
+public class ExcerciseSpecializationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specialization_id")

@@ -41,7 +41,7 @@ public class TrainerModel {
     private String achievements;
 
 
-    @Column(name = "statusID")
+    @Column(name = "AccountStatus")
     private Integer statusID;
 
     @Column(columnDefinition = "TEXT")
@@ -56,8 +56,8 @@ public class TrainerModel {
 
 
     @Lob
-    @Column(name = "cert")
-    private byte[] cert;
+    @Column(name = "certificationImage")
+    private byte[] certificationImage;
 
 
     public TrainerModel(){
@@ -153,13 +153,12 @@ public class TrainerModel {
     }
 
 
-
-    public byte[] getCert() {
-        return cert;
+    public byte[] getCertificationImage() {
+        return certificationImage;
     }
 
-    public void setCert(byte[] cert) {
-        this.cert = cert;
+    public void setCertificationImage(byte[] certificationImage) {
+        this.certificationImage = certificationImage;
     }
 
     public String getMobile() {

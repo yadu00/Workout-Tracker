@@ -1,12 +1,13 @@
 package com.WorkoutTracker.Service;
 
+import com.WorkoutTracker.Dto.PaymentDetailsDto;
 import com.WorkoutTracker.Model.Admin.AdminModel;
 import com.WorkoutTracker.Model.Admin.AdminRepo;
 import com.WorkoutTracker.Dto.AdminLoginDto;
 import com.WorkoutTracker.Dto.TrainerDto;
 import com.WorkoutTracker.Dto.UserDto;
-import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecialisationModel;
-import com.WorkoutTracker.Model.Exercises.Specialization.ExcerciseSpecializationRepo;
+import com.WorkoutTracker.Model.ExerciseSpecialization.ExcerciseSpecializationModel;
+import com.WorkoutTracker.Model.ExerciseSpecialization.ExcerciseSpecializationRepo;
 import com.WorkoutTracker.Model.Gender.GenderModel;
 import com.WorkoutTracker.Model.Gender.GenderRepo;
 import com.WorkoutTracker.Model.TrainerAccountStatus.StatusModel;
@@ -16,6 +17,8 @@ import com.WorkoutTracker.Model.User.UserModel;
 import com.WorkoutTracker.Model.Trainer.TrainerRepo;
 import com.WorkoutTracker.Model.User.UserRepo;
 
+import com.WorkoutTracker.Payment.PaymentModel;
+import com.WorkoutTracker.Payment.PaymentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +50,9 @@ public class AdminService {
 
     @Autowired
     private StatusRepo statusRepo;
+
+    @Autowired
+    private PaymentRepo paymentRepo;
 
 
     //add admin account details
@@ -110,6 +116,13 @@ public class AdminService {
                 trainerDto1.setEmail(trainerModel.getEmail());
                 trainerDto1.setCertification(trainerModel.getCertification());
                 trainerDto1.setExperienceYears(trainerModel.getExperienceYears());
+                trainerDto1.setSalary(trainerModel.getSalary());
+                trainerDto1.setCertificationImage(trainerModel.getCertificationImage());
+                Optional<ExcerciseSpecializationModel>excerciseSpecializationModelOptional=excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
+                if (excerciseSpecializationModelOptional.isPresent()){
+                    trainerDto1.setSpecialisationName(excerciseSpecializationModelOptional.get().getSpecialization_name());
+                }
+
                 dto.add(trainerDto1);
             }
 
@@ -119,11 +132,11 @@ public class AdminService {
     }
 
     //add specialization for exercise
-    public ResponseEntity<?> addSpecialization(ExcerciseSpecialisationModel excerciseSpecialisationModel) {
-        ExcerciseSpecialisationModel excerciseSpecialisationModel1=new ExcerciseSpecialisationModel();
-        excerciseSpecialisationModel1.setSpecialization_name(excerciseSpecialisationModel.getSpecialization_name());
-        excerciseSpecializationRepo.save(excerciseSpecialisationModel1);
-        return new ResponseEntity<>(excerciseSpecialisationModel1,HttpStatus.OK);
+    public ResponseEntity<?> addSpecialization(ExcerciseSpecializationModel excerciseSpecializationModel) {
+        ExcerciseSpecializationModel excerciseSpecializationModel1 =new ExcerciseSpecializationModel();
+        excerciseSpecializationModel1.setSpecialization_name(excerciseSpecializationModel.getSpecialization_name());
+        excerciseSpecializationRepo.save(excerciseSpecializationModel1);
+        return new ResponseEntity<>(excerciseSpecializationModel1,HttpStatus.OK);
     }
 
 
@@ -155,13 +168,13 @@ public class AdminService {
 
 
     //list all exercise specializations
-    public ResponseEntity<List<ExcerciseSpecialisationModel>> specialisations() {
-        List<ExcerciseSpecialisationModel> excerciseSpecialisationModels = excerciseSpecializationRepo.findAll();
-        if (excerciseSpecialisationModels.isEmpty()) {
+    public ResponseEntity<List<ExcerciseSpecializationModel>> specialisations() {
+        List<ExcerciseSpecializationModel> excerciseSpecializationModels = excerciseSpecializationRepo.findAll();
+        if (excerciseSpecializationModels.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(excerciseSpecialisationModels, HttpStatus.OK);
+        return new ResponseEntity<>(excerciseSpecializationModels, HttpStatus.OK);
     }
 
 
@@ -246,8 +259,8 @@ public class AdminService {
             trainerDto.setPassword(trainerModel.getPassword());
             trainerDto.setCertification(trainerModel.getCertification());
             trainerDto.setExperienceYears(trainerModel.getExperienceYears());
-            trainerDto.setCert(trainerModel.getCert());
-            Optional<ExcerciseSpecialisationModel> excerciseSpecialisationModel = excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
+            trainerDto.setCertificationImage(trainerModel.getCertificationImage());
+            Optional<ExcerciseSpecializationModel> excerciseSpecialisationModel = excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
             if (excerciseSpecialisationModel.isPresent()) {
                 trainerDto.setSpecialisationName(excerciseSpecialisationModel.get().getSpecialization_name());
             } else {
@@ -272,12 +285,45 @@ public class AdminService {
                 trainerDto1.setEmail(trainerModel.getEmail());
                 trainerDto1.setCertification(trainerModel.getCertification());
                 trainerDto1.setExperienceYears(trainerModel.getExperienceYears());
+                trainerDto1.setSalary(trainerModel.getSalary());
+                trainerDto1.setCertificationImage(trainerModel.getCertificationImage());
+                Optional<ExcerciseSpecializationModel>excerciseSpecializationModelOptional=excerciseSpecializationRepo.findById(trainerModel.getSpecialization_id());
+                if (excerciseSpecializationModelOptional.isPresent()){
+                    trainerDto1.setSpecialisationName(excerciseSpecializationModelOptional.get().getSpecialization_name());
+                }
                 dto.add(trainerDto1);
             }
 
         }
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<PaymentDetailsDto>> viewPaymentDetails() {
+        List<PaymentDetailsDto>paymentDetailsDtos=new ArrayList<>();
+        List<PaymentModel>paymentModelList=paymentRepo.findAll();
+        if (!paymentModelList.isEmpty()){
+            for (PaymentModel paymentModel:paymentModelList){
+                PaymentDetailsDto paymentDetailsDto=new PaymentDetailsDto();
+                paymentDetailsDto.setPayment_date(paymentModel.getPayment_date());
+                paymentDetailsDto.setRazorpay_payment_id(paymentModel.getRazorpay_payment_id());
+                paymentDetailsDto.setAmount(paymentModel.getAmount());
+                paymentDetailsDto.setStatus(paymentModel.getStatus());
+                paymentDetailsDto.setSubscriptionStart(paymentModel.getSubscriptionStart());
+                Optional<UserModel>userModelOptional=userRepo.findById(paymentModel.getUser_id());
+                if (userModelOptional.isPresent()){
+                    paymentDetailsDto.setUser(userModelOptional.get().getName());
+                }
+                Optional<TrainerModel>trainerModelOptional=trainerRepo.findById(paymentModel.getTrainer_id());
+                if (trainerModelOptional.isPresent()){
+                    paymentDetailsDto.setTrainer(trainerModelOptional.get().getName());
+                }
+                paymentDetailsDtos.add(paymentDetailsDto);
+            }
+
+
+        }
+        return new ResponseEntity<>(paymentDetailsDtos, HttpStatus.OK);
     }
 }
 
