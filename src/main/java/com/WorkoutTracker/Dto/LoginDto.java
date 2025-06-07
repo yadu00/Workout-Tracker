@@ -4,6 +4,16 @@ public class LoginDto {
     private String email;
     private  String password;
     private Integer statusID;
+    private Boolean isFirstLogin;
+
+
+    public Boolean getIsFirstLogin() {
+        return isFirstLogin;
+    }
+
+    public void setIsFirstLogin(Boolean isFirstLogin) {
+        this.isFirstLogin = isFirstLogin;
+    }
 
     public String getEmail() {
         return email;

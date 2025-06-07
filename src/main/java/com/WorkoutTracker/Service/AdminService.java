@@ -303,27 +303,43 @@ public class AdminService {
         List<PaymentDetailsDto>paymentDetailsDtos=new ArrayList<>();
         List<PaymentModel>paymentModelList=paymentRepo.findAll();
         if (!paymentModelList.isEmpty()){
-            for (PaymentModel paymentModel:paymentModelList){
-                PaymentDetailsDto paymentDetailsDto=new PaymentDetailsDto();
-                paymentDetailsDto.setPayment_date(paymentModel.getPayment_date());
-                paymentDetailsDto.setRazorpay_payment_id(paymentModel.getRazorpay_payment_id());
-                paymentDetailsDto.setAmount(paymentModel.getAmount());
-                paymentDetailsDto.setStatus(paymentModel.getStatus());
-                paymentDetailsDto.setSubscriptionStart(paymentModel.getSubscriptionStart());
-                Optional<UserModel>userModelOptional=userRepo.findById(paymentModel.getUser_id());
-                if (userModelOptional.isPresent()){
-                    paymentDetailsDto.setUser(userModelOptional.get().getName());
-                }
-                Optional<TrainerModel>trainerModelOptional=trainerRepo.findById(paymentModel.getTrainer_id());
-                if (trainerModelOptional.isPresent()){
-                    paymentDetailsDto.setTrainer(trainerModelOptional.get().getName());
-                }
-                paymentDetailsDtos.add(paymentDetailsDto);
-            }
+            for (PaymentModel paymentModel:paymentModelList) {
+                PaymentDetailsDto paymentDetailsDto = new PaymentDetailsDto();
+                Optional<UserModel> userModelOptional = userRepo.findById(paymentModel.getUser_id());
+                if (userModelOptional.isPresent()) {
+                    UserModel userModel = userModelOptional.get();
+                    if (userModel.getName() == null) {
+                        continue;
+                    }
 
+
+                    paymentDetailsDto.setUser(userModelOptional.get().getName());
+                    paymentDetailsDto.setPayment_date(paymentModel.getPayment_date());
+                    paymentDetailsDto.setRazorpay_payment_id(paymentModel.getRazorpay_payment_id());
+                    paymentDetailsDto.setAmount(paymentModel.getAmount());
+                    paymentDetailsDto.setStatus(paymentModel.getStatus());
+                    paymentDetailsDto.setSubscriptionStart(paymentModel.getSubscriptionStart());
+
+                    Optional<TrainerModel> trainerModelOptional = trainerRepo.findById(paymentModel.getTrainer_id());
+                    if (trainerModelOptional.isPresent()) {
+                        paymentDetailsDto.setTrainer(trainerModelOptional.get().getName());
+                    }
+                    paymentDetailsDtos.add(paymentDetailsDto);
+                }
+            }
 
         }
         return new ResponseEntity<>(paymentDetailsDtos, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> viewGender() {
+        List<GenderModel> genderModelList=genderRepo.findAll();
+        if (!genderModelList.isEmpty()){
+            return new ResponseEntity<>(genderModelList, HttpStatus.OK);
+
+        }
+        return new ResponseEntity<>("No gender records found",HttpStatus.NOT_FOUND);
+
     }
 }
 

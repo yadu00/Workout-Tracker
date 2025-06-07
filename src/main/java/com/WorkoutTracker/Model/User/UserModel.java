@@ -37,6 +37,18 @@ public class UserModel {
     @Column(name = "created_date")
     private LocalDate created_date;
 
+    @Column(name = "is_first_login")
+    private Boolean isFirstLogin = true;
+
+
+    public Boolean getIsFirstLogin() {
+        return isFirstLogin;
+    }
+
+    public void setIsFirstLogin(Boolean isFirstLogin) {
+        this.isFirstLogin = isFirstLogin;
+    }
+
     public Integer getUser_id() {
         return user_id;
     }

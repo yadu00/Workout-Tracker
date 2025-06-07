@@ -90,14 +90,22 @@ public class UserService {
     //login user account
     public ResponseEntity<?> loginDetails(LoginDto loginDto) {
         Optional<UserModel> userModelOptional = userRepo.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
+
         if (userModelOptional.isPresent()) {
-            Integer user_id = userModelOptional.get().getUser_id();
+            UserModel userModel = userModelOptional.get();
+            boolean firstLogin = Boolean.TRUE.equals(userModel.getIsFirstLogin());
+            if (firstLogin) {
+                userModel.setIsFirstLogin(false);
+                userRepo.save(userModel);
+            }
+            Integer user_id = userModel.getUser_id();
             Map<String, Object> loginres = new HashMap<>();
             loginres.put("message", "Login success");
             loginres.put("user_id", user_id);
+            loginres.put("firstLogin", firstLogin);
             return new ResponseEntity<>(loginres, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(" User Credentials Incorrect", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User Credentials Incorrect", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -116,7 +124,7 @@ public class UserService {
     //list trainers according to specialization
     public ResponseEntity<List<TrainerDto>> filterTrainers(Integer specialization_id) {
         List<TrainerDto> dto = new ArrayList<>();
-        List<TrainerModel> trainerModels = trainerRepo.findBySpecializationId(specialization_id);
+        List<TrainerModel> trainerModels = trainerRepo.findBySpecializationIdAndStatusID(specialization_id,2);
         if (!trainerModels.isEmpty()) {
             for (TrainerModel trainerModel : trainerModels) {
                     TrainerDto trainerDto1 = new TrainerDto();
@@ -191,7 +199,7 @@ public class UserService {
 
     public ResponseEntity<List<TrainerDto>> getallTrainers() {
         List<TrainerDto> dto = new ArrayList<>();
-        List<TrainerModel> trainerModels = trainerRepo.findAll();
+        List<TrainerModel> trainerModels = trainerRepo.findByStatusID(2);
 
         for (TrainerModel trainerModel : trainerModels) {
             TrainerDto trainerDto1 = new TrainerDto();

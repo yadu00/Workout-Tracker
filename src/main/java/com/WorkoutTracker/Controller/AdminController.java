@@ -60,6 +60,13 @@ public class AdminController {
         return adminService.getallTrainers();
     }
 
+    //list all gender
+    @GetMapping(path = "/viewGender")
+    public ResponseEntity<?> viewGender() {
+
+        return adminService.viewGender();
+    }
+
     //delete user
     @DeleteMapping(path = "/delete-User")
     public ResponseEntity<?> deleteUser(@RequestParam Integer user_id){
