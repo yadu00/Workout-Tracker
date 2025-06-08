@@ -29,6 +29,11 @@ public class ExcerciseDetailsModel {
     @Column(name = "trainer_id")
     private Integer trainer_id;
 
+    @Lob
+    @Column(name = "exerciseImage")
+    private byte[] exerciseImage;
+
+
     public String getFocusarea() {
         return focusarea;
     }
@@ -62,5 +67,11 @@ public class ExcerciseDetailsModel {
         this.trainer_id = trainer_id;
     }
 
+    public byte[] getExerciseImage() {
+        return exerciseImage;
+    }
 
+    public void setExerciseImage(byte[] exerciseImage) {
+        this.exerciseImage = exerciseImage;
+    }
 }

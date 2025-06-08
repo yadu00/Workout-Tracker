@@ -51,9 +51,9 @@ public class TrainerController {
 
     //Add Exercises
     @PostMapping(path="/addExcercises")
-    public ResponseEntity<?> addExcercises(@RequestBody ExcerciseDetailsModel excerciseDetailsModel){
+    public ResponseEntity<?> addExcercises(@RequestPart ExcerciseDetailsModel excerciseDetailsModel, @RequestPart MultipartFile exerciseImage){
         try {
-            return trainerService.addExcercises(excerciseDetailsModel);
+            return trainerService.addExcercises(excerciseDetailsModel,exerciseImage);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -142,9 +142,9 @@ public class TrainerController {
 
    //view scheduled exercises on each day
     @GetMapping("/viewWorkout")
-    public ResponseEntity<?> viewWorkout(@RequestParam Integer user_id,@RequestParam Integer id) {
+    public ResponseEntity<?> viewWorkout(@RequestParam Integer user_id,@RequestParam Integer workoutdayId) {
         try{
-            return trainerService.viewWorkout(user_id,id);
+            return trainerService.viewWorkout(user_id,workoutdayId);
         }catch (Exception e){
             e.printStackTrace();
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);

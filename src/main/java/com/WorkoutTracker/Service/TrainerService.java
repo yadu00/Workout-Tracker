@@ -109,11 +109,12 @@ public class TrainerService {
     }
 
     //Trainer Add Exercises
-    public ResponseEntity<?> addExcercises(ExcerciseDetailsModel excerciseDetailsModel) {
+    public ResponseEntity<?> addExcercises(ExcerciseDetailsModel excerciseDetailsModel, MultipartFile exerciseImage) throws IOException {
         ExcerciseDetailsModel excerciseDetailsModel1=new ExcerciseDetailsModel();
         excerciseDetailsModel1.setExercise_name(excerciseDetailsModel.getExercise_name());
         excerciseDetailsModel1.setFocusarea(excerciseDetailsModel.getFocusarea());
         excerciseDetailsModel1.setTrainer_id(excerciseDetailsModel.getTrainer_id());
+        excerciseDetailsModel1.setExerciseImage(exerciseImage.getBytes());
         excerciseDetailsRepo.save(excerciseDetailsModel1);
         return new ResponseEntity<>(excerciseDetailsModel1, HttpStatus.OK);
 
@@ -130,6 +131,7 @@ public class TrainerService {
                 excerciseDto.setExercise_id(excerciseDetailsModel.getExercise_id());
                 excerciseDto.setExercise_name(excerciseDetailsModel.getExercise_name());
                 excerciseDto.setFocusarea(excerciseDetailsModel.getFocusarea());
+                excerciseDto.setExerciseImage(excerciseDetailsModel.getExerciseImage());
                 dto.add(excerciseDto);
             }
 
@@ -217,10 +219,9 @@ public class TrainerService {
         workoutModel1.setUser_id(workoutModel.getUser_id());
         workoutModel1.setExercise_id(workoutModel.getExercise_id());
         workoutModel1.setTrainer_id(workoutModel.getTrainer_id());
-        workoutModel1.setId(workoutModel.getId());
+        workoutModel1.setWorkoutdayId(workoutModel.getWorkoutdayId());
         workoutModel1.setEquipments(workoutModel.getEquipments());
         workoutModel1.setCreated_date(LocalDate.now());
-        workoutModel1.setDuration(workoutModel.getDuration());
         workoutModel1.setReps(workoutModel.getReps());
         workoutModel1.setSets(workoutModel.getSets());
         workoutModel1.setWeights(workoutModel.getWeights());
@@ -262,7 +263,8 @@ public class TrainerService {
             dailyWorkoutDto.setDay(workoutDayModal.getDay());
             dailyWorkoutDto.setWorkoutName(workoutDayModal.getWorkoutName());
             dailyWorkoutDto.setDate(workoutDayModal.getDate());
-            dailyWorkoutDto.setId(workoutDayModal.getId());
+            dailyWorkoutDto.setWorkoutdayId(workoutDayModal.getWorkoutdayId());
+            dailyWorkoutDto.setStatus(workoutDayModal.getStatus());
             dtoList.add(dailyWorkoutDto);
         }
 
@@ -349,8 +351,8 @@ public class TrainerService {
     }
 
 //view wokouts scheduled to users
-    public ResponseEntity<?> viewWorkout(Integer userId,Integer Id) {
-        List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndId(userId,Id);
+    public ResponseEntity<?> viewWorkout(Integer userId,Integer workoutdayId) {
+        List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndId(userId,workoutdayId);
         List<WorkoutDto> dtos = new ArrayList<>();
         if (!workoutModelList.isEmpty()) {
             for (WorkoutModel workoutModel : workoutModelList) {
@@ -371,9 +373,10 @@ public class TrainerService {
                 if (excerciseDetailsModelOptional.isPresent()) {
                     ExcerciseDetailsModel excerciseDetailsModel = excerciseDetailsModelOptional.get();
                     workoutDto.setExcercise_name(excerciseDetailsModel.getExercise_name());
+                    workoutDto.setExerciseImage(excerciseDetailsModel.getExerciseImage());
 
                 }
-                Optional<WorkoutDayModal> dailyWorkoutOptional = workoutDayRepo.findById(workoutModel.getId());
+                Optional<WorkoutDayModal> dailyWorkoutOptional = workoutDayRepo.findById(workoutModel.getWorkoutdayId());
                 if (dailyWorkoutOptional.isPresent()) {
                     WorkoutDayModal workoutDayModal = dailyWorkoutOptional.get();
                     workoutDto.setDate(workoutDayModal.getDate());

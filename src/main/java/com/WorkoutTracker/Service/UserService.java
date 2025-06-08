@@ -292,8 +292,8 @@ public class UserService {
 
 
 
-    public ResponseEntity<?> viewWorkouts(Integer userId,Integer Id) {
-        List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndId(userId,Id);
+    public ResponseEntity<?> viewWorkouts(Integer userId,Integer workoutdayId) {
+        List<WorkoutModel> workoutModelList = workoutRepo.findByUserIdAndId(userId,workoutdayId);
         List<WorkoutDto> dtos = new ArrayList<>();
         if (!workoutModelList.isEmpty()) {
             for (WorkoutModel workoutModel : workoutModelList) {
@@ -312,9 +312,10 @@ public class UserService {
                     ExcerciseDetailsModel excerciseDetailsModel = excerciseDetailsModelOptional.get();
                     workoutDto.setExcercise_name(excerciseDetailsModel.getExercise_name());
                     workoutDto.setFocusarea(excerciseDetailsModel.getFocusarea());
+                    workoutDto.setExerciseImage(excerciseDetailsModel.getExerciseImage());
 
                 }
-                Optional<WorkoutDayModal> dailyWorkoutOptional = workoutDayRepo.findById(workoutModel.getId());
+                Optional<WorkoutDayModal> dailyWorkoutOptional = workoutDayRepo.findById(workoutModel.getWorkoutdayId());
                 if (dailyWorkoutOptional.isPresent()) {
                     WorkoutDayModal workoutDayModal = dailyWorkoutOptional.get();
                     workoutDto.setDate(workoutDayModal.getDate());
@@ -340,7 +341,8 @@ public class UserService {
             dailyWorkoutDto.setDay(workoutDayModal.getDay());
             dailyWorkoutDto.setWorkoutName(workoutDayModal.getWorkoutName());
             dailyWorkoutDto.setDate(workoutDayModal.getDate());
-            dailyWorkoutDto.setId(workoutDayModal.getId());
+            dailyWorkoutDto.setWorkoutdayId(workoutDayModal.getWorkoutdayId());
+            dailyWorkoutDto.setStatus(workoutDayModal.getStatus());
             dtoList.add(dailyWorkoutDto);
         }
 
@@ -410,6 +412,23 @@ public class UserService {
             workoutModel.setRemarks(workoutUpdateDto.getRemarks());
             workoutModel.setStatus(2);
             workoutRepo.save(workoutModel);
+            boolean allLogged = true;
+            Integer dailyWorkoutId = workoutModel.getWorkoutdayId();
+            List<WorkoutModel> workoutModelList=workoutRepo.findByDailyWorkoutId(dailyWorkoutId);
+            for (WorkoutModel wm : workoutModelList) {
+                if (wm.getStatus() != 2) {
+                    allLogged = false;
+                    break;
+                }
+            }
+            if (allLogged) {
+                Optional<WorkoutDayModal> workoutDayModalOptional = workoutDayRepo.findById(dailyWorkoutId);
+                if (workoutDayModalOptional.isPresent()) {
+                    WorkoutDayModal workoutDayModal = workoutDayModalOptional.get();
+                    workoutDayModal.setStatus(2);
+                    workoutDayRepo.save(workoutDayModal);
+                }
+            }
             return new ResponseEntity<>(workoutModel, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Workout Not found", HttpStatus.NOT_FOUND);
@@ -433,7 +452,7 @@ public class UserService {
         if (!workoutDayModalList.isEmpty()) {
             for (WorkoutDayModal workoutDayModal : workoutDayModalList) {
 
-                List<WorkoutModel> results = workoutRepo.findAllByIdColumn(workoutDayModal.getId());
+                List<WorkoutModel> results = workoutRepo.findAllByIdColumn(workoutDayModal.getWorkoutdayId());
                 if (!results.isEmpty()){
                     for(WorkoutModel workoutModel: results){
                         WorkoutDto workoutDto = new WorkoutDto();
@@ -444,6 +463,7 @@ public class UserService {
                         if (excerciseDetailsModelOptional.isPresent()) {
                             ExcerciseDetailsModel excerciseDetailsModel = excerciseDetailsModelOptional.get();
                             workoutDto.setExcercise_name(excerciseDetailsModel.getExercise_name());
+                            workoutDto.setExerciseImage(excerciseDetailsModel.getExerciseImage());
 
                         }
                         dtos.add(workoutDto);
@@ -582,4 +602,6 @@ public class UserService {
         }
         return new ResponseEntity<>("No Payment details found for this user", HttpStatus.NOT_FOUND);
     }
+
+
 }

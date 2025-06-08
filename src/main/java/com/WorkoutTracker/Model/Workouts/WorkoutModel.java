@@ -35,8 +35,6 @@ public class WorkoutModel {
     @Column(name="updated_date")
     private LocalDate updated_date;
 
-    @Column(name="duration")
-    private String duration;
 
     @Column(name="equipments")
     private String equipments;
@@ -50,8 +48,8 @@ public class WorkoutModel {
     @Column(name = "weights")
     private String weights;
 
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "workoutdayId")
+    private Integer workoutdayId;
 
     @Column(name = "timeUsed")
     private String timeUsed;
@@ -128,13 +126,7 @@ public class WorkoutModel {
         this.updated_date = updated_date;
     }
 
-    public String getDuration() {
-        return duration;
-    }
 
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
 
     public String getEquipments() {
         return equipments;
@@ -168,12 +160,12 @@ public class WorkoutModel {
         this.weights = weights;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getWorkoutdayId() {
+        return workoutdayId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setWorkoutdayId(Integer workoutdayId) {
+        this.workoutdayId = workoutdayId;
     }
 
     public String getTimeUsed() {

@@ -142,9 +142,9 @@ public class UserController {
 
     //view daily scheduled workout
     @GetMapping("/viewDailyWorkouts")
-    public ResponseEntity<?> viewWorkouts(@RequestParam Integer user_id,@RequestParam Integer id) {
+    public ResponseEntity<?> viewWorkouts(@RequestParam Integer user_id,@RequestParam Integer workoutdayId) {
         try{
-            return userService.viewWorkouts(user_id,id);
+            return userService.viewWorkouts(user_id,workoutdayId);
         }catch (Exception e){
             e.printStackTrace();
         }return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -338,4 +338,8 @@ public class UserController {
             return new ResponseEntity<>("Something Went Wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+
+
 }

@@ -15,21 +15,24 @@ public interface WorkoutRepo extends JpaRepository<WorkoutModel,Integer> {
 //    List<WorkoutModel> findByUserIdAndWeekdayId(Integer userId, Integer weekdayId);
 
 
-    @Query("SELECT w FROM WorkoutModel w WHERE w.user_id = :userId AND w.workout_id = :workoutId")
-    Optional<WorkoutModel> findByUser_IdAndWorkout_id(Integer userId, Integer workoutId);
+//    @Query("SELECT w FROM WorkoutModel w WHERE w.user_id = :userId AND w.workout_id = :workoutId")
+//    Optional<WorkoutModel> findByUser_IdAndWorkout_id(Integer userId, Integer workoutId);
 
     @Query("SELECT COUNT(w) FROM WorkoutModel w WHERE w.user_id = :userId AND w.status = :status")
     Integer countByUserIdAndStatus(@Param("userId") Integer userId, @Param("status") Integer status);
 
 
 
-    @Query("SELECT w FROM WorkoutModel w WHERE w.user_id = :userId AND w.id = :Id")
-    List<WorkoutModel> findByUserIdAndId(Integer userId, Integer Id);
+    @Query("SELECT w FROM WorkoutModel w WHERE w.user_id = :userId AND w.workoutdayId = :workoutdayId")
+    List<WorkoutModel> findByUserIdAndId(Integer userId, Integer workoutdayId);
 
 
 
-    @Query("SELECT w FROM WorkoutModel w WHERE w.id = :id")
+    @Query("SELECT w FROM WorkoutModel w WHERE w.workoutdayId = :id")
     List<WorkoutModel> findAllByIdColumn(@Param("id") Integer id);
+
+    @Query("SELECT w FROM WorkoutModel w WHERE w.workoutdayId = :id")
+    List<WorkoutModel> findByDailyWorkoutId(@Param("id")Integer dailyWorkoutId);
 
 
 

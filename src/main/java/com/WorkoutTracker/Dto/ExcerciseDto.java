@@ -12,6 +12,15 @@ public class ExcerciseDto {
     private Integer sets;
     private Integer reps;
     private double weights;
+    private byte[] exerciseImage;
+
+    public byte[] getExerciseImage() {
+        return exerciseImage;
+    }
+
+    public void setExerciseImage(byte[] exerciseImage) {
+        this.exerciseImage = exerciseImage;
+    }
 
     public String getFocusarea() {
         return focusarea;

@@ -5,7 +5,7 @@ import jakarta.persistence.Column;
 import java.time.LocalDate;
 
 public class DailyWorkoutDto {
-    private Integer id;
+    private Integer workoutdayId;
 
     private String day;
 
@@ -15,16 +15,16 @@ public class DailyWorkoutDto {
 
     private Integer trainer_id;
 
-    private String status;
+    private Integer status;
 
     private LocalDate date;
 
-    public Integer getId() {
-        return id;
+    public Integer getWorkoutdayId() {
+        return workoutdayId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setWorkoutdayId(Integer workoutdayId) {
+        this.workoutdayId = workoutdayId;
     }
 
     public String getDay() {
@@ -59,11 +59,11 @@ public class DailyWorkoutDto {
         this.trainer_id = trainer_id;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

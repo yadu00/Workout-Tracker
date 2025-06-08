@@ -11,8 +11,8 @@ import java.time.LocalDate;
 public class WorkoutDayModal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "workoutdayId")
+    private Integer workoutdayId;
 
     @Column(name = "day")
     private String day;
@@ -27,17 +27,21 @@ public class WorkoutDayModal {
     private Integer trainer_id;
 
     @Column(name = "status")
-    private String status;
+    private Integer status;
 
     @Column(name = "date")
     private LocalDate date;
 
-    public Integer getId() {
-        return id;
+    public WorkoutDayModal(){
+        this.status=1;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Integer getWorkoutdayId() {
+        return workoutdayId;
+    }
+
+    public void setWorkoutdayId(Integer workoutdayId) {
+        this.workoutdayId = workoutdayId;
     }
 
     public String getDay() {
@@ -72,11 +76,11 @@ public class WorkoutDayModal {
         this.trainer_id = trainer_id;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
