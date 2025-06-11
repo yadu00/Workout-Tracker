@@ -133,6 +133,7 @@ public class UserService {
                     trainerDto1.setSpecialization(trainerModel.getSpecialization_id());
                     trainerDto1.setExperienceYears(trainerModel.getExperienceYears());
                     trainerDto1.setSalary(trainerModel.getSalary());
+                    trainerDto1.setTrainer_id(trainerModel.getTrainer_id());
                 List<UserTrainerModel> userTrainerModelList = userTrainerRepo.findByTrainerId(trainerModel.getTrainer_id());
                 Integer sum = 0;
                 Integer count = 0;
